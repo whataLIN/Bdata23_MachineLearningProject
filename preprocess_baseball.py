@@ -52,44 +52,40 @@ SEED: NCAA March Madness Tournament의 시드
 
 '''
 
-from sklearn.preprocessing import LabelEncoder
-label_encoder = LabelEncoder()
-bd['TEAM'] = label_encoder.fit_transform(bd['TEAM'])    # team이름에 고유 수 부여 - 나중에쓸거임
-pd.get_dummies(bd, columns=['CONF'])                    # 분리
-bd['SEED'].fillna(9, inplace=True)                      # seed결측치처리
+# from sklearn.preprocessing import LabelEncoder
+# label_encoder = LabelEncoder()
+# bd['TEAM'] = label_encoder.fit_transform(bd['TEAM'])    # team이름에 고유 수 부여 - 나중에쓸거임
+# pd.get_dummies(bd, columns=['CONF'])                    # 분리
+# bd['SEED'].fillna(9, inplace=True)                      # seed결측치처리
 
-#R68 = 퍼스트 포, R64 = 64강, R32 = 32강, S16 = 스위트 16, E8 = 엘리트 에이트, F4 = 파이널 포, 2ND = 러너 -up, Champion = 해당 연도의 NCAA March Madness Tournament 우승자
+# #R68 = 퍼스트 포, R64 = 64강, R32 = 32강, S16 = 스위트 16, E8 = 엘리트 에이트, F4 = 파이널 포, 2ND = 러너 -up, Champion = 해당 연도의 NCAA March Madness Tournament 우승자
 
-ps={
-    "R68":68,
-    "R64":64,
-    "R32":32,
-    "S16":16,
-    "E8":8,
-    "F4":4,
-    "2ND":2,
-    "Champion":1
-}
+# ps={
+#     "R68":68,
+#     "R64":64,
+#     "R32":32,
+#     "S16":16,
+#     "E8":8,
+#     "F4":4,
+#     "2ND":2,
+#     "Champion":1
+# }
 
-#postseason의 결측치 처리
-bd['POSTSEASON'] = bd['POSTSEASON'].map(ps)
-ps_notnull=bd.dropna(subset=['POSTSEASON']).copy()
-null_ps_rows = bd[bd['POSTSEASON'].isnull()]         
+# #postseason의 결측치 처리
+# bd['POSTSEASON'] = bd['POSTSEASON'].map(ps)
+# ps_notnull=bd.dropna(subset=['POSTSEASON']).copy()
+# null_ps_rows = bd[bd['POSTSEASON'].isnull()]         
 
-# 결측치 행의 팀의 다른 행 postseason의 평균값으로 채움
-for t in teamlist:
-  mean_post=ps_notnull[ps_notnull['TEAM'] == t].POSTSEASON.mean()   #t 팀들의 postseason값
-  null_ps_rows.loc[null_ps_rows['TEAM']==t, 'POSTSEASON'] = mean_post
-  bd.update(null_ps_rows)
+# # 결측치 행의 팀의 다른 행 postseason의 평균값으로 채움
+# for t in teamlist:
+#   mean_post=ps_notnull[ps_notnull['TEAM'] == t].POSTSEASON.mean()   #t 팀들의 postseason값
+#   null_ps_rows.loc[null_ps_rows['TEAM']==t, 'POSTSEASON'] = mean_post
+#   bd.update(null_ps_rows)
 
-# 채웠는데도 남은 결측치는 최빈값으로 때움
-mode_value = ps_notnull['POSTSEASON'].mode()[0]
-bd['POSTSEASON'].fillna(mode_value, inplace=True)  
+# # 채웠는데도 남은 결측치는 최빈값으로 때움
+# mode_value = ps_notnull['POSTSEASON'].mode()[0]
+# bd['POSTSEASON'].fillna(mode_value, inplace=True)  
 
 
-# 승률 (win_rate)
-# W - 이긴 수 G - 게임 수
-num_W = df.W
-num_G = df.G
-win_rate = num_W / num_G
-df.insert(3, 'P_V', num_W / num_G)
+bd["Winning_rate"] = bd['W']/bd['G']
+bd.drop(['TEAM', 'CONF', 'WAB', 'POSTSEASON', 'SEED','YEAR','W','G'], axis=1, inplace=True)
