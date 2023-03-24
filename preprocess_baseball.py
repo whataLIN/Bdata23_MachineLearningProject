@@ -44,9 +44,9 @@ FTRD: 자유투율 허용
 
 ADJ_T: 조정된 템포(팀이 평균 디비전 I 템포로 플레이하려는 팀을 상대로 가질 템포(40분당 점유)의 추정치)
 
-WAB: 거품 위의 승리
+WAB: 거품 위의 승리 - 본선 진출이 불투명함
 
-포스트시즌: 주어진 팀이 탈락하거나 시즌이 끝난 라운드(R68 = 퍼스트 포, R64 = 64강, R32 = 32강, S16 = 스위트 16, E8 = 엘리트 에이트, F4 = 파이널 포, 2ND = 러너 -up, Champion = 해당 연도의 NCAA March Madness Tournament 우승자)
+POSTSEASON: 주어진 팀이 탈락하거나 시즌이 끝난 라운드(R68 = 퍼스트 포, R64 = 64강, R32 = 32강, S16 = 스위트 16, E8 = 엘리트 에이트, F4 = 파이널 포, 2ND = 러너 -up, Champion = 해당 연도의 NCAA March Madness Tournament 우승자)
 
 SEED: NCAA March Madness Tournament의 시드
 
@@ -89,3 +89,4 @@ SEED: NCAA March Madness Tournament의 시드
 
 bd["Winning_rate"] = bd['W']/bd['G']
 bd.drop(['TEAM', 'CONF', 'WAB', 'POSTSEASON', 'SEED','YEAR','W','G'], axis=1, inplace=True)
+
