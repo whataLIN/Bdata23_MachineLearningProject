@@ -68,3 +68,9 @@ bd.fillna({'POSTSEASON':'Missed Tournament'}, inplace = True)
 bd.fillna({'SEED':'Missed Tournament'}, inplace = True)
 bd=pd.get_dummies(bd, columns=['CONF','SEED','POSTSEASON'])
 bd.drop(['TEAM', 'WAB', 'YEAR','W','G'], axis=1, inplace=True)
+
+# min-max 스케일링
+from sklearn.preprocessing import MinMaxScaler
+mm_scaler = MinMaxScaler()
+X_train_scaled = mm_scaler.fit_transform(X_train)
+X_test_scaled = mm_scaler.transform(X_test)
