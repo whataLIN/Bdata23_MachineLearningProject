@@ -262,8 +262,9 @@ elif choice == "데이터페이지":
         st.write("머신러닝 모델입니다")
         option = st.selectbox(
         '원하는 차트를 골라주세요',
-        ('Chart1', 'Chart2', 'Chart3'))
-        if option == 'Chart1':
+        ('LinearRegressor', 'RandomForest', 'DecisionTree', 'XGBoost'))
+
+        if option == 'LinearRegressor':
             # 모델 불러오기
            # 랜덤 포레스트 모델 불러오기
             model_path = "MH/LRmodel.pkl"
@@ -278,12 +279,13 @@ elif choice == "데이터페이지":
             predict_button = st.button("예측")
 
             if predict_button:
-                    variable1 = np.array([승리수, 경기수]*28)
+                    variable1 = np.array([승리수, 경기수]*38 + [경기수])
                     model1 = joblib.load('MH/LRmodel.pkl')
                     pred1 = model1.predict([variable1])
                     pred1 = pred1.round(2)
                     st.metric("결과: ", pred1[0])
-        elif option == 'Chart2':
+
+        elif option == 'RandomForest':
 
             # 랜덤 포레스트 모델 불러오기
             model_path = "MH/RFmodel.pkl"
@@ -308,7 +310,7 @@ elif choice == "데이터페이지":
             st.subheader('예측 결과')
             st.write('Y:', y)
 
-        elif option == 'Chart3':
+        elif option == 'DecisionTree':
 
             # 결정트리 모델 불러오기
             model_path = "MH/DecisionTree.pkl"
@@ -332,6 +334,29 @@ elif choice == "데이터페이지":
             # 예측 결과 출력
             st.subheader('예측 결과')
             st.write('Y:', round(y, 2))
+
+
+        elif option == 'XGBoost':
+
+            model_path = "MH/XGBoost.pkl"
+            model = joblib.load(model_path)
+
+            st.title('XGBoost')
+            st.write("경기수에 따른 승리 게임")
+
+            # first line
+            r1_col1, r1_col2 = st.columns(2)
+            경기수 = r1_col1.slider("경기수", 0, 40)
+            승리수 = r1_col2.slider("승리수", 0, 40)
+
+            predict_button = st.button("예측")
+
+            if predict_button:
+                input_data = np.array([승리수, 경기수]*38 + [경기수])
+                input_data = input_data.reshape(1, -1)
+                prediction = model.predict(input_data)[0]
+                prediction = round(prediction, 2)
+                st.write(f"예측한 승률: {prediction}")
 
     with tab3:
         tab3.subheader("Streamlit 진행상태..")
