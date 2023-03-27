@@ -430,7 +430,7 @@ elif choice == "시뮬레이션":
                 stat=state[f"{p}_{i+1}"]
                 st.write(f"{p} : {stat}")
 
-            pl.loc(i+1) = player
+            pl.loc[i+1] = player
     
     st.write(pl)
 
