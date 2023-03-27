@@ -432,6 +432,7 @@ elif choice == "시뮬레이션":
 
             pl.loc[i] = player
     
-    st.write[pl]
+    st.write(pl)
+    
                 #슈팅 : 슈팅_i
             #데이터프레임에 선수 능력치 저장하깅
