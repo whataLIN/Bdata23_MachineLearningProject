@@ -8,7 +8,7 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import joblib
 
-menu = ["메인페이지", "데이터페이지", "기타"]
+menu = ["메인페이지", "데이터페이지", "시뮬레이션"]
 choice = st.sidebar.selectbox("메뉴를 선택해주세요", menu)
 
 if choice == "메인페이지":
@@ -348,3 +348,62 @@ elif choice == "데이터페이지":
         > * 팀들의 스탯 별 레이더차트 비교
 
         '''
+
+elif choice == "시뮬레이션":
+
+    # tab0, tab1, tab2, tab3 = st.tabs(["첫 번째 선수", "첫 번째 선수", "첫 번째 선수", "첫 번째 선수"])
+    # players = []
+    
+    # with tab1:
+    #     tab1.subheader("첫 번째 선수")
+    
+    # i=1
+
+    # while False:
+    #     player={}
+    #     player["Shooting"] = st.slider("슈팅", min_value=1, max_value=10, value=1, key=f"shooting_1")
+    #     player["Dribbling"] = st.slider("드리블", min_value=1, max_value=10, value=1, key=f"Dribbling_1")
+    #     player["Passing"] = st.slider("패스", min_value=1, max_value=10, value=1, key=f"Passing_1")
+    #     player["Rebounding"] = st.slider("리바운드", min_value=1, max_value=10, value=1, key=f"Rebounding_1")
+    #     player["Defense"] = st.slider("수비", min_value=1, max_value=10, value=1, key=f"Defense_1")
+    #     player["Stamina"] = st.slider("스테미나", min_value=1, max_value=10, value=1, key=f"Stamina_1")
+
+    #     total_stats=player["Shooting"]+player["Dribbling"]+player["Passing"]+player["Rebounding"]+player["Defense"]+player["Stamina"]
+    #     if total_stats > 40:
+    #         st.warning("스텟 총합이 40을 넘을 수 없습니다.")
+    #     else:
+
+
+    # if st.button('저장'):
+    #     players.append(player)
+
+    # tabs = st.tabs([f"{i}번째 선수" for i in range(1, 6)])
+
+    cols = st.columns(5)
+    
+    player_keys = [
+        "shooting", "Dribbling", "Passing", "Rebounding", 'Defense', "Stamina"
+    ]
+
+    pl=pd.DataFrame(columns=player_keys, index=range(1,6))
+    
+    # for i, t in enumerate(tabs):
+    for i, c in enumerate(cols):
+        with c:
+            st.slider("슈팅", min_value=1, max_value=10, value=1, key=f"shooting_{i+1}")
+            st.slider("드리블", min_value=1, max_value=10, value=1, key=f"Dribbling_{i+1}")
+            st.slider("패스", min_value=1, max_value=10, value=1, key=f"Passing_{i+1}")
+            st.slider("리바운드", min_value=1, max_value=10, value=1, key=f"Rebounding_{i+1}")
+            st.slider("수비", min_value=1, max_value=10, value=1, key=f"Defense_{i+1}")
+            st.slider("스테미나", min_value=1, max_value=10, value=1, key=f"Stamina_{i+1}")
+            state = st.session_state
+            player = {
+                key: value for key, value in [(k, state[f'{k}_{i+1}']) for k in player_keys]
+            }
+            
+            for p in player_keys:           #i는 플레이어번호. p는 능력치
+                stat=state[f"{p}_{i+1}"]
+                st.write(f"{p} : {stat}")
+
+                #슈팅 : 슈팅_i
+            #데이터프레임에 선수 능력치 저장하깅
