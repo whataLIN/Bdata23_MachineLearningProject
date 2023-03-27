@@ -6,7 +6,7 @@ import numpy as np
 import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
-import pickle
+import joblib
 
 menu = ["메인페이지", "데이터페이지", "기타"]
 choice = st.sidebar.selectbox("메뉴를 선택해주세요", menu)
@@ -112,7 +112,7 @@ if choice == "메인페이지":
         '''
 
 elif choice == "데이터페이지":
-    tab0, tab1, tab2, tab3 = st.tabs(["🗃 Data", "📈 Chart", "🦾 Machine Learning", "Streamlit 진행상태.."])
+    tab0, tab1, tab2, tab3 = st.tabs(["🗃 Data", "📈 Chart", "🦾 Machine Learning" ,"Streamlit 진행상태.."])
     data = np.random.randn(10, 1)
     with tab0:
         tab0.subheader("🗃 Data Tab")
@@ -265,70 +265,73 @@ elif choice == "데이터페이지":
         ('Chart1', 'Chart2', 'Chart3'))
         if option == 'Chart1':
             # 모델 불러오기
-            model_path = "MH/model.pkl"
-            with open(model_path, 'rb') as f:
-                model = pickle.load(f)
+           # 랜덤 포레스트 모델 불러오기
+            model_path = "MH/LRmodel.pkl"
+            model = joblib.load(model_path)
 
-                st.title('Linear Regression Model')
+            st.write("LinearRegressor")
+            # 첫번째 행
+            r1_col1, r1_col2 = st.columns(2)
+            경기수 = r1_col1.slider("경기수", 0, 40)
+            승리수 = r1_col2.slider("승리수", 0, 40)
 
-                # create sidebar with input parameters
-                # st.sidebar.header('Input Parameters')
-                st.write('Input Parameters')
-                # x = st.sidebar.slider('X', 0.0, 10.0, 5.0, 0.1)
-                x = st.slider('X', 0.0, 1.0, 0.5, 0.01)
+            predict_button = st.button("예측")
 
-                # use model to make prediction
-                x = np.array([x]*77).reshape(1, -1)  # 입력값의 차원을 맞춰줍니다.
-                y = model.predict(x)
-                y = y * 100
-                y = y.round(2)
-
-                # show prediction result
-                st.subheader('Prediction Result')
-                st.write('Y:', y[0])
+            if predict_button:
+                    variable1 = np.array([승리수, 경기수]*28)
+                    model1 = joblib.load('MH/LRmodel.pkl')
+                    pred1 = model1.predict([variable1])
+                    pred1 = pred1.round(2)
+                    st.metric("결과: ", pred1[0])
         elif option == 'Chart2':
 
-            # 모델 불러오기
-            model_path = "MH/model.pkl"
-            with open(model_path, 'rb') as f:
-                model = pickle.load(f)
+            # 랜덤 포레스트 모델 불러오기
+            model_path = "MH/RFmodel.pkl"
+            model = joblib.load(model_path)
 
-            # 입력된 데이터를 이용해 타겟 변수를 예측하는 함수를 정의합니다.
-            def predict(model, input_df):
-                predictions = model.predict(input_df)
-                return predictions
+            # Streamlit 앱 설정
+            st.title('Random Forest Model')
+            st.write('입력 변수')
 
-            # Streamlit 앱을 정의합니다.
-            def app():
-                # 앱 제목을 설정합니다.
-                st.title("Random Forest 모델 예측")
-                
-                # 데이터 업로드를 위한 사이드바를 만듭니다.
-                st.sidebar.title("데이터 업로드")
-                uploaded_file = st.sidebar.file_uploader("CSV 파일 선택", type="csv")
-                
-                # 사용자 입력 폼을 생성합니다.
-                st.sidebar.title("입력 특성")
-                sepal_length = st.sidebar.slider("꽃받침 길이", 4.0, 8.0, 5.0)
-                sepal_width = st.sidebar.slider("꽃받침 너비", 2.0, 4.5, 3.0)
-                petal_length = st.sidebar.slider("꽃잎 길이", 1.0, 7.0, 4.0)
-                petal_width = st.sidebar.slider("꽃잎 너비", 0.1, 2.5, 1.0)
-                
-                # 사용자 입력을 데이터프레임으로 결합합니다.
-                input_data = {'sepal_length': sepal_length,
-                            'sepal_width': sepal_width,
-                            'petal_length': petal_length,
-                            'petal_width': petal_width}
-                input_df = pd.DataFrame([input_data])
-                
-                # 모델을 이용해 예측합니다.
-                if st.sidebar.button("예측"):
-                    predictions = predict(model, input_df)
-                    st.write("예측된 타겟 변수 값은:", predictions[0])
-                
-            # Streamlit 앱을 실행합니다.
-            # if __name__ == '__main__':
-            #     app()
+            # 입력 변수를 위한 슬라이더 추가
+            x1 = st.slider('X1', 0.0, 1.0, 0.5, 0.01)
+            x2 = st.slider('X2', 0.0, 1.0, 0.5, 0.01)
+            x3 = st.slider('X3', 0.0, 1.0, 0.5, 0.01)
+            x4 = st.slider('X4', 0.0, 1.0, 0.5, 0.01)
+
+            # 모델을 사용하여 예측 수행
+            x = np.array([x1, x2, x3, x4] * 19 + [x4]).reshape(1, -1)
+
+            y = model.predict(x)[0]
+
+            # 예측 결과 출력
+            st.subheader('예측 결과')
+            st.write('Y:', y)
+
+        elif option == 'Chart3':
+
+            # 결정트리 모델 불러오기
+            model_path = "MH/DecisionTree.pkl"
+            model = joblib.load(model_path)
+
+            # Streamlit 앱 설정
+            st.title('결정트리 모델')
+            st.write('입력 변수')
+
+            # 입력 변수를 위한 슬라이더 추가
+            x1 = st.slider('X1', 0.0, 10.0, 0.5, 0.01)
+            x2 = st.slider('X2', 0.0, 1.0, 0.5, 0.01)
+
+            # 모델을 사용하여 예측 수행
+            # x = np.array([x1 * 77], [x2]).reshape(1, -1)
+            x = np.array([x1, x2] *38 + [x1]).reshape(1, -1)  # 입력값의 차원을 맞춰줍니다.
+
+            y = model.predict(x)
+            y = y[0]
+
+            # 예측 결과 출력
+            st.subheader('예측 결과')
+            st.write('Y:', round(y, 2))
 
     with tab3:
         tab3.subheader("Streamlit 진행상태..")
