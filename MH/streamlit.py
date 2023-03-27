@@ -262,7 +262,7 @@ elif choice == "데이터페이지":
         st.write("머신러닝 모델입니다")
         option = st.selectbox(
         '원하는 차트를 골라주세요',
-        ('LinearRegressor', 'RandomForest', 'DecisionTree', 'XGBoost'))
+        ('LinearRegressor', 'RandomForest', 'DecisionTree', 'XGBoost')
 
         if option == 'LinearRegressor':
             # 모델 불러오기
