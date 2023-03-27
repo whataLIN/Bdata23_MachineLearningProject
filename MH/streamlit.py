@@ -5,8 +5,10 @@ import pandas as pd
 import numpy as np
 import plotly.express as px
 import plotly.graph_objects as go
+from plotly.subplots import make_subplots
+import joblib
 
-menu = ["메인페이지", "데이터페이지", "기타"]
+menu = ["메인페이지", "데이터페이지", "시뮬레이션"]
 choice = st.sidebar.selectbox("메뉴를 선택해주세요", menu)
 
 if choice == "메인페이지":
@@ -110,7 +112,7 @@ if choice == "메인페이지":
         '''
 
 elif choice == "데이터페이지":
-    tab0, tab1, tab2 = st.tabs(["🗃 Data", "📈 Chart", "Streamlit 진행상태.."])
+    tab0, tab1, tab2, tab3 = st.tabs(["🗃 Data", "📈 Chart", "🦾 Machine Learning" ,"Streamlit 진행상태.."])
     data = np.random.randn(10, 1)
     with tab0:
         tab0.subheader("🗃 Data Tab")
@@ -159,189 +161,180 @@ elif choice == "데이터페이지":
      
     with tab1:
         tab1.subheader("📈 Chart Tab")
-        tab1.write()
+        st.write()
         '''
         ### Stat Info
-        * 차트설명
-        ---
         '''
         option = st.selectbox(
-        '원하는 차트유형을 골라주세요',
-        ('Radar', 'Bar', 'Chart'))
-        st.write(f'고르신 {option} 차트를 출력하겠습니다: ')
+        '원하는 차트를 골라주세요',
+        ('스탯비교 그래프', '승률데이터 그래프', 'Chart'))
+        st.write(f'고르신 {option}를 출력하겠습니다: ')
 
-        if option == 'Radar':
-            st.write("Radar 차트 유형입니다")
-            option = st.selectbox(
-            '원하는 차트를 골라주세요',
-            ('Radar1', 'Radar2', 'Radar3', 'Radar4'))
-            if option == 'Radar1':
-                # 데이터 프레임 만들기
+        if option == '스탯비교 그래프':
+            # CSV 파일이 업로드되었는지 확인
+            url = "https://raw.githubusercontent.com/Myun9hyun/trash/main/MH/cbb.csv"
+            df = pd.read_csv(url)
+
+            # 선택한 컬럼명으로 데이터프레임 필터링
+            conf_val = st.selectbox("원하는 지역을 골라주세요", options=df['CONF'].unique())
+        
+            year_list = df['YEAR'].unique().tolist()
+            year_list.sort(reverse=False) # 오름차순 정렬
+            year_val = st.selectbox("원하는 시즌을 골라주세요", options=year_list)
+            filtered_df = df[(df['CONF'] == conf_val) & (df['YEAR'] == year_val)]
+
+
+            # TEAM의 컬럼명으로 데이터프레임 필터링하여 radar chart 출력
+            team_col = "TEAM"
+            team_vals = st.multiselect("비교하고 싶은 Team을 골라주세요", options=filtered_df[team_col].unique())
+            stats = st.multiselect('Radar chart로 나타내고 싶은 스탯을 골라주세요:', filtered_df.columns.tolist())
+
+            # make_subplots로 1x1 subplot 만들기
+            fig = make_subplots(rows=1, cols=1, specs=[[{'type': 'polar'}]])
+
+            # 선택한 각 team별로 trace 추가하기
+            for team_val in team_vals:
+                team_df = filtered_df[filtered_df[team_col] == team_val]
+                theta = stats + [stats[0]]
+                fig.add_trace(go.Scatterpolar(
+                    r=team_df[stats].values.tolist()[0] + [team_df[stats].values.tolist()[0][0]],
+                    theta=theta,
+                    fill='toself',
+                    name=team_val
+                ), row=1, col=1)
+
+            fig.update_layout(polar=dict(radialaxis=dict(visible=True, range=[0, 70])))
+            st.plotly_chart(fig)
+
+        elif option == '승률데이터 그래프':
+            st.write("승률 데이터 계산입니다")
+            url = "https://raw.githubusercontent.com/Myun9hyun/trash/main/MH/Basketball_processing.csv"
+            df = pd.read_csv(url)
+            df = df.iloc[:, 1:]
+            unique_CONF = df['CONF'].unique()
+            
+            # 각 고유값에 해당하는 인덱스 추출하여 딕셔너리에 저장
+            index_dict = {}
+            for CONF in unique_CONF:
+                index_dict[CONF] = df[df['CONF'] == CONF].index.tolist()
+            
+            # 사용자로부터 지역 입력 받기
+            user_CONF = st.selectbox("원하시는 지역을 골라주세요:", unique_CONF)
+            
+            # 선택한 지역에 해당하는 모든 행 출력
+            if user_CONF in unique_CONF:
+                indices = index_dict[user_CONF]
+                sub_df = df.loc[indices]
+                st.write(f"### 해당 지역 '{user_CONF}'에 소속된 팀들의 데이터입니다. ")
+                st.write(sub_df)
                 
-                fig = go.Figure()
+                # 사용자로부터 시즌 입력 받기
+                # user_YEAR = st.selectbox("원하시는 시즌을 골라주세요:", [''] + sub_df['YEAR'].unique().tolist())
+                unique_years = sub_df['YEAR'].unique().tolist()
+                sorted_years = sorted(unique_years, reverse=False) # 오름차순 정렬
+                user_YEAR = st.selectbox("원하시는 시즌을 골라주세요:", [''] + sorted_years)
 
-                # 차트 출력
-                st.write("연습 레이더차트입니다.")
-                # 데이터 프레임 만들기
-                df2 = pd.DataFrame({
-                    'TEAM': ['North Carolina', 'Wisconsin', 'Michigan', 'Texas Tech'],
-                    # 'DRB': [30, 23.7, 24.9, 28.7],
-                    '2P_O': [53.9, 54.8, 54.7, 52.8],
-                    '3P_O': [32.7, 36.5, 35.2, 36.5],
-                    '2P_D': [44.6, 44.7, 46.8, 41.9],
-                    '3P_D': [36.2, 37.5, 33.2, 29.7],
-
-                })
-
-                # Plotly의 Radar Chart를 만들기
-                fig = go.Figure()
-
-                colors = ['Red', 'Green', 'Blue', 'Orange', 'Coral']
-
-                for i, row in df2.iterrows():
-                    fig.add_trace(go.Scatterpolar(
-                        r=[row['2P_O'], row['3P_O'], row['2P_D'], row['3P_D']],
-                        theta=['2점 슛 성공률', '3점 슛 성공률', '2점 슛 허용률', '3점 슛 허용률'],
-                        fill='toself',
-                        name=row['TEAM'],
-                        line=dict(color=colors[i], width=5),
-                        fillcolor=colors[i],
-                        opacity=0.25
-                    ))
-
-                fig.update_layout(
-                    polar=dict(
-                        radialaxis=dict(
-                            visible=True,
-                            range=[23, 55]
-                        ),
-                    ),
-                    showlegend=True
-                )
-
-                # Streamlit에서 Radar Chart 표시하기
-                st.plotly_chart(fig)
-            elif option == 'Radar2':
-                st.write("차트2입니다")
-                
-            elif option == 'Radar3':
-                st.write("차트3입니다")
-                chart_data = pd.DataFrame(
-                np.random.randn(30, 3),
-                columns=["a", "b", "c"])
-                st.bar_chart(chart_data)
-
-            elif option == 'Radar4':
-                st.write("차트 연습22")
-                # 데이터 프레임 만들기
-                df = pd.DataFrame({
-                    'name': ['Alice', 'Bob', 'Charlie', 'David'],
-                    'science': [90, 60, 70, 80],
-                    'math': [80, 70, 60, 90],
-                    'history': [60, 80, 70, 90]
-                })
-
-                # Theta 순서 변경하기
-                df = df[['name', 'math', 'science', 'history']]  # Theta 순서를 [math, science, history]로 변경
-
-                # Plotly의 Radar Chart를 만들기
-                fig = go.Figure()
-
-                for index, row in df.iterrows():
-                    fig.add_trace(go.Scatterpolar(
-                        r=[row['math'], row['science'], row['history']],
-                        theta=['Math', 'Science', 'History'],  # Theta 순서도 변경
-                        fill='none',
-                        mode='lines',
-                        name=row['name'],
-                        line=dict(color='red', width=2)
-                    ))
-
-                fig.update_layout(
-                    polar=dict(
-                        radialaxis=dict(
-                            visible=True,
-                            range=[0, 100]
-                        ),
-                    ),
-                    showlegend=True
-                )
-
-                # Streamlit에서 Radar Chart 표시하기
-                st.plotly_chart(fig)
-
-
-
-        elif option == 'Bar':
-            st.write("Bar차트 유형입니다")
-            option = st.selectbox(
-            '원하는 차트를 골라주세요',
-            ('승률데이터 그래프', 'Bar2', 'Bar3'))
-  
-            if option == '승률데이터 그래프':
-                st.write("승률 데이터 계산입니다")
-                url = "https://raw.githubusercontent.com/Myun9hyun/trash/main/MH/Basketball_processing.csv"
-                df = pd.read_csv(url)
-                df = df.iloc[:, 1:]
-                unique_CONF = df['CONF'].unique()
-                
-                # 각 고유값에 해당하는 인덱스 추출하여 딕셔너리에 저장
-                index_dict = {}
-                for CONF in unique_CONF:
-                    index_dict[CONF] = df[df['CONF'] == CONF].index.tolist()
-                
-                # 사용자로부터 지역 입력 받기
-                user_CONF = st.selectbox("원하시는 지역을 골라주세요:", unique_CONF)
-                
-                # 선택한 지역에 해당하는 모든 행 출력
-                if user_CONF in unique_CONF:
-                    indices = index_dict[user_CONF]
-                    sub_df = df.loc[indices]
-                    st.write(f"### 해당 지역 '{user_CONF}'에 소속된 팀들의 데이터입니다. ")
+                # 선택한 시즌에 해당하는 행 출력
+                if user_YEAR != "":
+                    sub_df = sub_df[sub_df['YEAR'] == int(user_YEAR)]
+                    st.write(f"### 해당 '{user_CONF}' 지역에 소속된 팀 {user_YEAR} 시즌의 데이터입니다. ")
                     st.write(sub_df)
-                    
-                    # 사용자로부터 시즌 입력 받기
-                    user_YEAR = st.selectbox("원하시는 시즌을 골라주세요:", [''] + sub_df['YEAR'].unique().tolist())
-                    
-                    # 선택한 시즌에 해당하는 행 출력
-                    if user_YEAR != "":
-                        sub_df = sub_df[sub_df['YEAR'] == int(user_YEAR)]
-                        st.write(f"### 해당 '{user_CONF}' 지역에 소속된 팀 {user_YEAR} 시즌의 데이터입니다. ")
-                        st.write(sub_df)
-                        # 승률 계산
-                        df_winrate = (sub_df['W'] / sub_df['G']) * 100
-                        # 계산한 승률을 소수점 아래 2자리까지 표현
-                        df_winrate_round = df_winrate.round(2)
-                        sub_df_Team = sub_df[['TEAM']]
-                        result = pd.concat([sub_df_Team, df_winrate_round], axis=1)
-                        df_result = result.rename(columns={0: 'win_rate'})
-                        df_result.reset_index(drop=True, inplace=True)
-                        # st.write(df_result)
-                        df_long = pd.melt(df_result, id_vars=['TEAM'], value_vars=['win_rate'])
-                        fig = px.bar(df_long, x='TEAM', y='value', color='TEAM')
-                        st.write(f"'{user_CONF}' 지역에 소속된 팀들의 {user_YEAR} 시즌의 승률 그래프입니다. ")
-                        st.plotly_chart(fig)
-                else:
-                    st.warning("다시 골라주세요.")
+                    # 승률 계산
+                    df_winrate = (sub_df['W'] / sub_df['G']) * 100
+                    # 계산한 승률을 소수점 아래 2자리까지 표현
+                    df_winrate_round = df_winrate.round(2)
+                    sub_df_Team = sub_df[['TEAM']]
+                    result = pd.concat([sub_df_Team, df_winrate_round], axis=1)
+                    df_result = result.rename(columns={0: 'win_rate'})
+                    df_result.reset_index(drop=True, inplace=True)
+                    # st.write(df_result)
+                    df_long = pd.melt(df_result, id_vars=['TEAM'], value_vars=['win_rate'])
+                    fig = px.bar(df_long, x='TEAM', y='value', color='TEAM')
+                    st.write(f"'{user_CONF}' 지역에 소속된 팀들의 {user_YEAR} 시즌의 승률 그래프입니다. ")
+                    st.plotly_chart(fig)
+            else:
+                st.warning("다시 골라주세요.")
 
-            elif option == 'Bar2':
-                st.write("막대 차트 2입니다")
-            elif option == 'Bar3':
-                st.write("막대 차트 3입니다")
         elif option == 'Chart':
-            st.write("차트입니다")
-            option = st.selectbox(
-            '원하는 차트를 골라주세요',
-            ('Chart1', 'Chart2', 'Chart3'))
-            if option == 'Chart1':
-                st.write("차트1입니다")
-            elif option == 'Chart2':
-                st.write("차트2입니다")
-            elif option == 'Chart3':
-                st.write("차트3입니다") 
-   
+            st.write("승률 데이터 계산입니다")
     with tab2:
-        tab2.subheader("Streamlit 진행상태..")
+        tab2.subheader("🦾 Machine Learning")
+        st.write("머신러닝 모델입니다")
+        option = st.selectbox(
+        '원하는 차트를 골라주세요',
+        ('Chart1', 'Chart2', 'Chart3'))
+        if option == 'Chart1':
+            # 모델 불러오기
+           # 랜덤 포레스트 모델 불러오기
+            model_path = "MH/LRmodel.pkl"
+            model = joblib.load(model_path)
+
+            st.write("LinearRegressor")
+            # 첫번째 행
+            r1_col1, r1_col2 = st.columns(2)
+            경기수 = r1_col1.slider("경기수", 0, 40)
+            승리수 = r1_col2.slider("승리수", 0, 40)
+
+            predict_button = st.button("예측")
+
+            if predict_button:
+                    variable1 = np.array([승리수, 경기수]*28)
+                    model1 = joblib.load('MH/LRmodel.pkl')
+                    pred1 = model1.predict([variable1])
+                    pred1 = pred1.round(2)
+                    st.metric("결과: ", pred1[0])
+        elif option == 'Chart2':
+
+            # 랜덤 포레스트 모델 불러오기
+            model_path = "MH/RFmodel.pkl"
+            model = joblib.load(model_path)
+
+            # Streamlit 앱 설정
+            st.title('Random Forest Model')
+            st.write('입력 변수')
+
+            # 입력 변수를 위한 슬라이더 추가
+            x1 = st.slider('X1', 0.0, 1.0, 0.5, 0.01)
+            x2 = st.slider('X2', 0.0, 1.0, 0.5, 0.01)
+            x3 = st.slider('X3', 0.0, 1.0, 0.5, 0.01)
+            x4 = st.slider('X4', 0.0, 1.0, 0.5, 0.01)
+
+            # 모델을 사용하여 예측 수행
+            x = np.array([x1, x2, x3, x4] * 19 + [x4]).reshape(1, -1)
+
+            y = model.predict(x)[0]
+
+            # 예측 결과 출력
+            st.subheader('예측 결과')
+            st.write('Y:', y)
+
+        elif option == 'Chart3':
+
+            # 결정트리 모델 불러오기
+            model_path = "MH/DecisionTree.pkl"
+            model = joblib.load(model_path)
+
+            # Streamlit 앱 설정
+            st.title('결정트리 모델')
+            st.write('입력 변수')
+
+            # 입력 변수를 위한 슬라이더 추가
+            x1 = st.slider('X1', 0.0, 10.0, 0.5, 0.01)
+            x2 = st.slider('X2', 0.0, 1.0, 0.5, 0.01)
+
+            # 모델을 사용하여 예측 수행
+            # x = np.array([x1 * 77], [x2]).reshape(1, -1)
+            x = np.array([x1, x2] *38 + [x1]).reshape(1, -1)  # 입력값의 차원을 맞춰줍니다.
+
+            y = model.predict(x)
+            y = y[0]
+
+            # 예측 결과 출력
+            st.subheader('예측 결과')
+            st.write('Y:', round(y, 2))
+
+    with tab3:
+        tab3.subheader("Streamlit 진행상태..")
         st.write()
         '''
         ### 현재 진행상태
@@ -355,3 +348,62 @@ elif choice == "데이터페이지":
         > * 팀들의 스탯 별 레이더차트 비교
 
         '''
+
+elif choice == "시뮬레이션":
+
+    # tab0, tab1, tab2, tab3 = st.tabs(["첫 번째 선수", "첫 번째 선수", "첫 번째 선수", "첫 번째 선수"])
+    # players = []
+    
+    # with tab1:
+    #     tab1.subheader("첫 번째 선수")
+    
+    # i=1
+
+    # while False:
+    #     player={}
+    #     player["Shooting"] = st.slider("슈팅", min_value=1, max_value=10, value=1, key=f"shooting_1")
+    #     player["Dribbling"] = st.slider("드리블", min_value=1, max_value=10, value=1, key=f"Dribbling_1")
+    #     player["Passing"] = st.slider("패스", min_value=1, max_value=10, value=1, key=f"Passing_1")
+    #     player["Rebounding"] = st.slider("리바운드", min_value=1, max_value=10, value=1, key=f"Rebounding_1")
+    #     player["Defense"] = st.slider("수비", min_value=1, max_value=10, value=1, key=f"Defense_1")
+    #     player["Stamina"] = st.slider("스테미나", min_value=1, max_value=10, value=1, key=f"Stamina_1")
+
+    #     total_stats=player["Shooting"]+player["Dribbling"]+player["Passing"]+player["Rebounding"]+player["Defense"]+player["Stamina"]
+    #     if total_stats > 40:
+    #         st.warning("스텟 총합이 40을 넘을 수 없습니다.")
+    #     else:
+
+
+    # if st.button('저장'):
+    #     players.append(player)
+
+    # tabs = st.tabs([f"{i}번째 선수" for i in range(1, 6)])
+
+    cols = st.columns(5)
+    
+    player_keys = [
+        "shooting", "Dribbling", "Passing", "Rebounding", 'Defense', "Stamina"
+    ]
+
+    pl=pd.DataFrame(columns=player_keys, index=range(1,6))
+    
+    # for i, t in enumerate(tabs):
+    for i, c in enumerate(cols):
+        with c:
+            st.slider("슈팅", min_value=1, max_value=10, value=1, key=f"shooting_{i+1}")
+            st.slider("드리블", min_value=1, max_value=10, value=1, key=f"Dribbling_{i+1}")
+            st.slider("패스", min_value=1, max_value=10, value=1, key=f"Passing_{i+1}")
+            st.slider("리바운드", min_value=1, max_value=10, value=1, key=f"Rebounding_{i+1}")
+            st.slider("수비", min_value=1, max_value=10, value=1, key=f"Defense_{i+1}")
+            st.slider("스테미나", min_value=1, max_value=10, value=1, key=f"Stamina_{i+1}")
+            state = st.session_state
+            player = {
+                key: value for key, value in [(k, state[f'{k}_{i+1}']) for k in player_keys]
+            }
+            
+            for p in player_keys:           #i는 플레이어번호. p는 능력치
+                stat=state[f"{p}_{i+1}"]
+                st.write(f"{p} : {stat}")
+
+                #슈팅 : 슈팅_i
+            #데이터프레임에 선수 능력치 저장하깅
