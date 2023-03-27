@@ -413,6 +413,7 @@ elif choice == "시뮬레이션":
     pl=pd.DataFrame(columns=player_keys, index=range(1,6))
     
     # for i, t in enumerate(tabs):
+    team_conf= st.selectbox=
     for i, c in enumerate(cols):
         with c:
             st.slider("슈팅", min_value=1, max_value=10, value=1, key=f"shooting_{i+1}")
@@ -431,8 +432,10 @@ elif choice == "시뮬레이션":
                 st.write(f"{p} : {stat}")
 
             pl.loc[i+1] = player
-    
+
+    # shooting - 
     st.write(pl)
 
                 #슈팅 : 슈팅_i
             #데이터프레임에 선수 능력치 저장하깅
+    
