@@ -439,7 +439,7 @@ elif choice == "시뮬레이션":
 
     
     tdf = df.drop(['TEAM', 'YEAR','W','G'], axis=1).copy()
-    max_values = [tdf[i].max() for i in bd.columns]
+    max_values = [tdf[i].max() for i in tdf.columns]
 
     
 
