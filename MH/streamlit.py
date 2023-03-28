@@ -763,10 +763,10 @@ elif choice == "시뮬레이션":
         model = joblib.load(f'KL/{option}.pkl')
         # pred = model.predict(variable)
         # pred = np.round(pred, 2)
-        pred = model.predict(variable).round(2)
+        pred = (model.predict(variable)*100).round(2)
         if option=='XGBoost': pred=str(pred)[1:5]
 
-        st.metric("결과: ", pred)
+        st.metric(f"결과: {pred}%")
 
 
 
