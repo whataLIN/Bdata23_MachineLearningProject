@@ -764,9 +764,9 @@ elif choice == "시뮬레이션":
         # pred = model.predict(variable)
         # pred = np.round(pred, 2)
         pred = model.predict(variable)
-        pred = pred.round(2)
+        pred2 = pred.round(2)
 
-        st.metric("결과: ", pred)
+        st.metric("결과: ", pred2)
 
 
 
