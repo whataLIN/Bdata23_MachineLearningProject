@@ -763,7 +763,8 @@ elif choice == "시뮬레이션":
         model = joblib.load(f'KL/{option}.pkl')
         # pred = model.predict(variable)
         # pred = np.round(pred, 2)
-        pred = np.round(model.predict(variable), 2)
+        pred = model.predict(variable)
+        pred = pred.round(2)
 
         st.metric("결과: ", pred)
 
