@@ -5,6 +5,7 @@ statsmodels
 plotly
 matplotlib
 scikit-learn==0.24.2
+scikit-learn==1.2.2
 mlxtend
 xgboost
 seaborn
