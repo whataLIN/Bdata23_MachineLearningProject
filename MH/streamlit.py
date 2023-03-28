@@ -762,7 +762,7 @@ elif choice == "시뮬레이션":
         variable = df_forms
     
         model = joblib.load(f'KL/{option}.pkl')
-        pred = model.predict(variable)
+        pred = model.predict(variable).round(2)
         st.metric("결과: ", pred)
 
 
