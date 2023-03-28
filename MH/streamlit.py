@@ -685,7 +685,7 @@ elif choice == "시뮬레이션":
     percentage_cal(pl, pl_to_per, df=fromDefense, stat='Defense')
     percentage_cal(pl, pl_to_per, df=fromStamina, stat='Stamina')
     
-    st.write(pl_to_per)
+    # st.write(pl_to_per)
     teaminfo = pd.DataFrame(
         data=pl_to_per.sum(axis=0).values.reshape(1, 15),
         columns=tdf.columns,
@@ -720,8 +720,6 @@ elif choice == "시뮬레이션":
         if col_name=='BARTHAG' or col_name=='WAB': continue
 
         df_forms[col_name]+=teaminfo[col_name]
-
-    st.write(df_forms)
 
     
     # teaminfo = pd.DataFrame(
@@ -766,16 +764,6 @@ elif choice == "시뮬레이션":
         model = joblib.load(f'KL/{option}.pkl')
         pred = model.predict(variable)
         st.metric("결과: ", pred)
-
-
-
-    
-
-
-    # st.write(pl)
-
-                #슈팅 : 슈팅_i
-            #데이터프레임에 선수 능력치 저장하깅
 
 
 
