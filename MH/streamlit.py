@@ -651,7 +651,7 @@ elif choice == "시뮬레이션":
         # ADJOE, ADJDE, EFG_O, EFG_D, TOR, TORD, ORB, DRB, FTR, FTRD, 2P_O, 2P_D, 3P_O, 3P_D, ADJ_T
         # postseason, seed는 missed tornament.
 
-    def percentage_cal(stat_pl, final_df, df, stat):      # statlist를 하나씩 받음
+    def percentage_cal(stat_pl, final_df, df, stat):
             #df는 스탯별로 영향을 주는 변수끼리 나눈거
             #stat_pl는 선수들의 스탯 모음
             #finaldf는 결과를 반영할 df
@@ -750,7 +750,7 @@ elif choice == "시뮬레이션":
 
     option = st.selectbox(
     '원하는 차트를 골라주세요',
-    ('LinearRegressor', 'RandomForest', 'DecisionTree')) #'XGBoost'
+    ('LinearRegressor', 'RandomForest', 'DecisionTree', 'XGBoost')) #'XGBoost'
     model_path = f"KL/{option}.pkl"
     model = joblib.load(model_path)
 
