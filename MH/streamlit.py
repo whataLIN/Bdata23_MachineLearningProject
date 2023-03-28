@@ -764,7 +764,7 @@ elif choice == "시뮬레이션":
         # pred = model.predict(variable)
         # pred = np.round(pred, 2)
         pred = model.predict(variable).round(2)
-        if option=='XGBoost': pred=str(pred)[:5]
+        if option=='XGBoost': pred=str(pred)[1:5]
 
         st.metric("결과: ", pred)
 
