@@ -439,6 +439,7 @@ elif choice == "데이터페이지":
             # xgboost 모델 불러오기
             model_path = "MH/XGBoost5.pkl"
             model = joblib.load(model_path)
+
             # 데이터 불러오기
             df = pd.read_csv('MH/cbb_drop.csv')
             X = df.drop('P_V', axis=1) # 독립변수 (관측값, 피쳐)
@@ -449,29 +450,94 @@ elif choice == "데이터페이지":
             two_O = df['2P_O']
             three_O = df['3P_O']
 
+            option = st.selectbox(
+            '원하는 시각화 결과값을 골라주세요',
+            ('전체', '세부'))
+
+            if option == '전체':
+
+                # 전체
+                fig = px.bar(
+                    x=df.columns[:-1], 
+                    y=model.feature_importances_, 
+                    labels={'x': '변수', 'y': '중요도'}
+                    )
+
+                fig.update_layout(
+                    title="중요 변수 확인(전체)", 
+                    xaxis_title="변수", 
+                    yaxis_title="중요도", 
+                    width=800, 
+                    height=600
+                    )
+
+
+            elif option == '세부':
+                # 세부
+                fig = px.bar(
+                    x=df.columns[:-1], 
+                    y=model.feature_importances_, 
+                    labels={'x': '변수', 'y': '중요도'}
+                    )
+
+                fig.update_layout(
+                    title="중요 변수 확인(세부)", 
+                    xaxis_title="변수", 
+                    yaxis_title="중요도", 
+                    yaxis_range=[0, 0.0004],
+                    width=800, 
+                    height=600
+                    )
+
+            st.plotly_chart(fig)
 
             # 모델 불러오기
+            # Load the XGBoost model
             with open('MH/XGBoost5.pkl', 'rb') as f:
                 model = joblib.load(f)
-            st.write("구현한 XG Boost 모델 그래프입니다.")                
-            # 첫번째 행
-            col1, col2, col3, col4, col5, col6  = st.columns(6)
+
+            # Create sliders for input variables
+            col1, col2, col3, col4, col5, col6 = st.columns(6)
             G = col1.slider("경기수", 0, 40)
             W = col2.slider("승리수", 0, 40)
             ORB = col3.slider("리바운드 수치", 0, 50)
             FTR = col4.slider("자유투 수치", 0, 50)
             two_O = col5.slider("2점슛 수치", 0, 50)
             three_O = col6.slider("3점슛 수치", 0, 30)
-            
+
+            # Create a button to trigger the prediction
             predict_button = st.button("예측")
 
+            # When the button is pressed, make the prediction and show the result
             if predict_button:
-                    predicted = model.predict(X)
-                    variable1 = pd.DataFrame([[G, W, ORB, FTR, two_O, three_O]], columns=['G', 'W', 'ORB', 'FTR', '2P_O', '3P_O'])
-                    model1 = joblib.load('MH/XGBoost5.pkl')
-                    pred1 = model1.predict(variable1)
-                    pred1 = pred1.round(4)
-                    st.metric("승률 예측 결과: ", pred1[0]*100)
+
+            # Create a DataFrame of the input variables
+                X = pd.DataFrame([[G, W, ORB, FTR, two_O, three_O]], columns=['G', 'W', 'ORB', 'FTR', '2P_O', '3P_O'])
+           
+                # Load the XGBoost model and make the prediction
+                model = joblib.load('MH/XGBoost5.pkl')
+                prediction = model.predict(X)[0]
+                prediction = round(prediction*100, 2)
+                st.metric("승률 예측 결과: ", prediction)
+
+                # 예측 결과를 그래프한 결과
+                fig = go.Figure(go.Indicator(
+                mode = "gauge+number",
+                value = prediction,
+                domain = {'x': [0, 1], 'y': [0, 1]},
+                gauge = {'axis': {'range': [0, 100]},
+                        'steps' : [{'range': [0, 25], 'color': "lightgray"},
+                                {'range': [25, 50], 'color': "gray"},
+                                {'range': [50, 75], 'color': "lightgray"},
+                                {'range': [75, 100], 'color': "gray"}],
+                        'bar': {'color': "black"}}))
+    
+                # Add title and labels to the chart
+                fig.update_layout(title={'text': '승률 예측 결과', 'y':0.95, 'x':0.5},
+                            xaxis={'visible': False}, yaxis={'visible': False})
+    
+                st.plotly_chart(fig)
+
     with tab3:
         tab3.subheader("Streamlit 진행상태..")
         st.write()
