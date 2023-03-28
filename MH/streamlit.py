@@ -6,11 +6,24 @@ import numpy as np
 import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
+import matplotlib.pyplot as plt
 import joblib
 import xgboost as xgb
+import seaborn as sns
+from streamlit_option_menu import option_menu
 
-menu = ["메인페이지", "데이터페이지", "시뮬레이션"]
-choice = st.sidebar.selectbox("메뉴를 선택해주세요", menu)
+
+with st.sidebar:
+    choice = option_menu("Contents", ["메인페이지", "데이터페이지", "시뮬레이션"],
+                         icons=['house', 'kanban', 'bi bi-robot'],
+                         menu_icon="app-indicator", default_index=0,
+                         styles={
+        "container": {"padding": "4!important", "background-color": "#fafafa"},
+        "icon": {"color": "black", "font-size": "25px"}, 
+        "nav-link": {"font-size": "16px", "text-align": "left", "margin":"0px", "--hover-color": "#fafafa"},
+        "nav-link-selected": {"background-color": "#02ab21"},
+    }
+    )
 
 if choice == "메인페이지":
 
@@ -42,18 +55,22 @@ if choice == "메인페이지":
         tab1.subheader("🔎Explain")
         tab1.write()
         '''
-        ---
         ### 자료 설명
-        > * '13~'21년 동안의 미국 대학 농구 데이터를 사용하여 각 팀마다의 승률을 계산하고 예측하는 모듈을 만든다.  
-        > * 추가적으로 각 팀의 세부 스탯이 승률에 어떤 영향을 미치는 지도 알아본다.
+        > * '13~'19년 동안의 미국 대학 농구 데이터를 사용하여 각 팀마다의 승률을 계산하고 예측하는 모듈을 만든다. 
+        > * 가상의 스탯을 지닌 선수 5명을 추가하고 선택한 지역에 참가했을때 예측 승률에 대해서 알아본다.
         ---
         ### Chart & Data List 📝
-        > * 넣어둔 데이터 & 차트
+        > * Data 목록
         >> * CSV 파일 전체
-        >> * CSV 데이터프레임 Index 혹은 Columns 검색 상자
-        > * 차트
-        >> * 레이더 차트(스탯)
-        >> * 바차트
+        >> * CSV 데이터프레임 Index 혹은 Columns 검색 기능
+        > * Chart 목록
+        >> * 스탯 비교 그래프(Radar)
+        >> * 승률 비교 그래프(Bar)
+        > * 머신러닝 모듈 목록
+        >> * 선형회귀
+        >> * Random Forest
+        >> * Decision Tree
+        >> * XG Boost
         ---
         '''
     with tab2:
@@ -268,105 +285,193 @@ elif choice == "데이터페이지":
             st.write("승률 데이터 계산입니다")
     with tab2:
         tab2.subheader("🦾 Machine Learning")
-        st.write("머신러닝 모델입니다")
+        st.write("머신러닝 모델링 예시입니다")
         option = st.selectbox(
         '원하는 차트를 골라주세요',
         ('LinearRegressor', 'RandomForest', 'DecisionTree', 'XGBoost'))
 
         if option == 'LinearRegressor':
-            # 모델 불러오기
-           # 랜덤 포레스트 모델 불러오기
-            model_path = "MH/LRmodel.pkl"
+            
+            # 선형회귀 모델 불러오기
+            model_path = "MH/LRmodel_drop.pkl"
             model = joblib.load(model_path)
+            # 데이터 불러오기
+            df = pd.read_csv('MH/cbb_drop.csv')
+            X = df.drop('P_V', axis=1) # 독립변수 (관측값, 피쳐)
+            G = df['G']
+            W = df['W']
+            ORB = df['ORB']
+            FTR = df['FTR']
+            two_O = df['2P_O']
+            three_O = df['3P_O']
 
+
+            # 모델 불러오기
+            with open('MH/LRmodel_drop.pkl', 'rb') as f:
+                model = joblib.load(f)
+            st.write("구현한 선형회귀 모델 그래프입니다.")
+            # 예측값 계산
+            df['predicted'] = model.predict(X)
+            st.set_option('deprecation.showPyplotGlobalUse', False)
+            # 산점도 그리기
+            sns.set_style('darkgrid')
+            plt.figure(figsize=(8, 6))
+            plt.title('Linear Regression')
+            
+            sns.scatterplot(x = 'P_V', y='predicted', data=df)
+            st.pyplot()
             st.write("LinearRegressor")
             # 첫번째 행
-            r1_col1, r1_col2 = st.columns(2)
-            경기수 = r1_col1.slider("경기수", 0, 40)
-            승리수 = r1_col2.slider("승리수", 0, 40)
+            col1, col2, col3, col4, col5, col6  = st.columns(6)
+            G = col1.slider("경기수", 0, 40)
+            W = col2.slider("승리수", 0, 40)
+            ORB = col3.slider("리바운드 수치", 0, 50)
+            FTR = col4.slider("자유투 수치", 0, 50)
+            two_O = col5.slider("2점슛 수치", 0, 50)
+            three_O = col6.slider("3점슛 수치", 0, 30)
+            
+
 
             predict_button = st.button("예측")
 
             if predict_button:
-                    variable1 = np.array([승리수, 경기수] * 28)
-                    model1 = joblib.load('MH/LRmodel.pkl')
+                    predicted = model.predict(X)
+                    variable1 = np.array([G, W, ORB, FTR, two_O, three_O])
+                    model1 = joblib.load('MH/LRmodel_drop.pkl')
                     pred1 = model1.predict([variable1])
-                    pred1 = pred1.round(2)
-                    st.metric("결과: ", pred1[0])
+                    pred1 = pred1.round(4)
+                   
+                    st.metric("승률 예측 결과: ", pred1[0]*100)
 
         elif option == 'RandomForest':
 
-            # 랜덤 포레스트 모델 불러오기
-            model_path = "MH/RFmodel.pkl"
+            # 랜덤포레스트 모델 불러오기
+            model_path = "MH/RFmodel_drop.pkl"
             model = joblib.load(model_path)
+            # 데이터 불러오기
+            df = pd.read_csv('MH/cbb_drop.csv')
+            X = df.drop('P_V', axis=1) # 독립변수 (관측값, 피쳐)
+            G = df['G']
+            W = df['W']
+            ORB = df['ORB']
+            FTR = df['FTR']
+            two_O = df['2P_O']
+            three_O = df['3P_O']
 
-            # Streamlit 앱 설정
-            st.title('Random Forest Model')
-            st.write('입력 변수')
 
-            # 입력 변수를 위한 슬라이더 추가
-            x1 = st.slider('X1', 0.0, 1.0, 0.5, 0.01)
-            x2 = st.slider('X2', 0.0, 1.0, 0.5, 0.01)
-            x3 = st.slider('X3', 0.0, 1.0, 0.5, 0.01)
-            x4 = st.slider('X4', 0.0, 1.0, 0.5, 0.01)
+            # 모델 불러오기
+            with open('MH/RFmodel_drop.pkl', 'rb') as f:
+                model = joblib.load(f)
+            st.write("구현한 Random Forest 모델입니다.")               
+            # 첫번째 행
+            col1, col2, col3, col4, col5, col6  = st.columns(6)
+            G = col1.slider("경기수", 0, 40)
+            W = col2.slider("승리수", 0, 40)
+            ORB = col3.slider("리바운드 수치", 0, 50)
+            FTR = col4.slider("자유투 수치", 0, 50)
+            two_O = col5.slider("2점슛 수치", 0, 50)
+            three_O = col6.slider("3점슛 수치", 0, 30)
+            
+            predict_button = st.button("예측")
 
-            # 모델을 사용하여 예측 수행
-            x = np.array([x1, x2, x3, x4] * 19 + [x4]).reshape(1, -1)
-
-            y = model.predict(x)[0]
-
-            # 예측 결과 출력
-            st.subheader('예측 결과')
-            st.write('Y:', y)
+            if predict_button:
+                    predicted = model.predict(X)
+                    variable1 = np.array([G, W, ORB, FTR, two_O, three_O])
+                    model1 = joblib.load('MH/RFmodel_drop.pkl')
+                    pred1 = model1.predict([variable1])
+                    pred1 = pred1.round(4)
+                    st.metric("승률 예측 결과: ", pred1[0]*100)
 
         elif option == 'DecisionTree':
 
             # 결정트리 모델 불러오기
-            model_path = "MH/DecisionTree.pkl"
+            model_path = "MH/DecisionTree_drop.pkl"
             model = joblib.load(model_path)
+            # 데이터 불러오기
+            df = pd.read_csv('MH/cbb_drop.csv')
+            X = df.drop('P_V', axis=1) # 독립변수 (관측값, 피쳐)
+            G = df['G']
+            W = df['W']
+            ORB = df['ORB']
+            FTR = df['FTR']
+            two_O = df['2P_O']
+            three_O = df['3P_O']
+            st.write("Decision Tree 상관관계에 따른 히트맵입니다.")
+            model = joblib.load("MH/DecisionTree_drop.pkl")
 
-            # Streamlit 앱 설정
-            st.title('결정트리 모델')
-            st.write('입력 변수')
+            df = pd.read_csv("MH/cbb_drop.csv")
+            y = df.pop("P_V")
 
-            # 입력 변수를 위한 슬라이더 추가
-            x1 = st.slider('X1', 0.0, 10.0, 0.5, 0.01)
-            x2 = st.slider('X2', 0.0, 1.0, 0.5, 0.01)
+            feature_importances = pd.Series(model.feature_importances_, index=df.columns)
+            st.set_option('deprecation.showPyplotGlobalUse', False)
+            plt.figure(figsize=(12, 10))
+            sns.heatmap(df.corr(), annot=True, cmap="coolwarm")
+            # sns.heatmap(X.iloc[:, sorted_idx].corr(), cmap='coolwarm', annot=True)
 
-            # 모델을 사용하여 예측 수행
-            # x = np.array([x1 * 77], [x2]).reshape(1, -1)
-            x = np.array([x1, x2] *38 + [x1]).reshape(1, -1)  # 입력값의 차원을 맞춰줍니다.
+            st.pyplot()
 
-            y = model.predict(x)
-            y = y[0]
+            # 모델 불러오기
+            with open('MH/DecisionTree_drop.pkl', 'rb') as f:
+                model = joblib.load(f)
+            st.write("구현한 Decision Tree 모델 그래프입니다.")
+            # 첫번째 행
+            col1, col2, col3, col4, col5, col6  = st.columns(6)
+            G = col1.slider("경기수", 0, 40)
+            W = col2.slider("승리수", 0, 40)
+            ORB = col3.slider("리바운드 수치", 0, 50)
+            FTR = col4.slider("자유투 수치", 0, 50)
+            two_O = col5.slider("2점슛 수치", 0, 50)
+            three_O = col6.slider("3점슛 수치", 0, 30)
+            
+            predict_button = st.button("예측")
 
-            # 예측 결과 출력
-            st.subheader('예측 결과')
-            st.write('Y:', round(y, 2))
+            if predict_button:
+                    predicted = model.predict(X)
+                    variable1 = np.array([G, W, ORB, FTR, two_O, three_O])
+                    model1 = joblib.load('MH/DecisionTree_drop.pkl')
+                    pred1 = model1.predict([variable1])
+                    pred1 = pred1.round(4)
+                    st.metric("승률 예측 결과: ", pred1[0]*100)
 
 
         elif option == 'XGBoost':
 
-            model_path = "MH/XGBoost.pkl"
+            # xgboost 모델 불러오기
+            model_path = "MH/XGBoost5.pkl"
             model = joblib.load(model_path)
+            # 데이터 불러오기
+            df = pd.read_csv('MH/cbb_drop.csv')
+            X = df.drop('P_V', axis=1) # 독립변수 (관측값, 피쳐)
+            G = df['G']
+            W = df['W']
+            ORB = df['ORB']
+            FTR = df['FTR']
+            two_O = df['2P_O']
+            three_O = df['3P_O']
 
-            st.title('XGBoost')
-            st.write("경기수에 따른 승리 게임")
 
-            # first line
-            r1_col1, r1_col2 = st.columns(2)
-            경기수 = r1_col1.slider("경기수", 0, 40)
-            승리수 = r1_col2.slider("승리수", 0, 40)
-
+            # 모델 불러오기
+            with open('MH/XGBoost5.pkl', 'rb') as f:
+                model = joblib.load(f)
+            st.write("구현한 XG Boost 모델 그래프입니다.")                
+            # 첫번째 행
+            col1, col2, col3, col4, col5, col6  = st.columns(6)
+            G = col1.slider("경기수", 0, 40)
+            W = col2.slider("승리수", 0, 40)
+            ORB = col3.slider("리바운드 수치", 0, 50)
+            FTR = col4.slider("자유투 수치", 0, 50)
+            two_O = col5.slider("2점슛 수치", 0, 50)
+            three_O = col6.slider("3점슛 수치", 0, 30)
+            
             predict_button = st.button("예측")
 
             if predict_button:
-                input_data = np.array([승리수, 경기수]*38 + [경기수])
-                input_data = input_data.reshape(1, -1)
-                prediction = model.predict(input_data)[0]
-                prediction = round(prediction, 2)
-                st.write(f"예측한 승률: {prediction}")
-
+                    predicted = model.predict(X)
+                    variable1 = pd.DataFrame([[G, W, ORB, FTR, two_O, three_O]], columns=['G', 'W', 'ORB', 'FTR', '2P_O', '3P_O'])
+                    model1 = joblib.load('MH/XGBoost5.pkl')
+                    pred1 = model1.predict(variable1)
+                    pred1 = pred1.round(4)
+                    st.metric("승률 예측 결과: ", pred1[0]*100)
     with tab3:
         tab3.subheader("Streamlit 진행상태..")
         st.write()
@@ -375,11 +480,13 @@ elif choice == "데이터페이지":
         > * 메인페이지 구현완료.
         > * 데이터 페이지 내 data tab 데이터 검색 기능 추가..
         > * 데이터 페이지-Bar차트-지역/시즌에 따른 팀들의 승률 데이터 추가
-        > * ...
+        > * 머신러닝 모델링 시각화
+        > * 머신러닝 모델링 선형회귀/결정트리 시각화 그래프 추가
+        > * side bar 바꿈
 
         ### 추가해야 할 기능
-        > * 머신러닝 모델링 구형
-        > * 팀들의 스탯 별 레이더차트 비교
+        > * 수정 후 이 탭 삭제
+        > * 시뮬레이션 기능 추가
 
         '''
 
