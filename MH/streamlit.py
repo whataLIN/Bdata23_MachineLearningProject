@@ -582,7 +582,7 @@ elif choice == "데이터페이지":
                                 {'range': [25, 50], 'color': "orangered"},
                                 {'range': [50, 75], 'color': "orange"},
                                 {'range': [75, 100], 'color': "orangered"}],
-                        'bar': {'color': "orange"}}))
+                        'bar': {'color': "red"}}))
     
                 # Add title and labels to the chart
                 fig.update_layout(title={'text': '승률 예측 결과', 'y':0.95, 'x':0.5},
