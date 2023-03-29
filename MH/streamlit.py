@@ -375,7 +375,7 @@ elif choice == "데이터페이지":
 
             option = st.selectbox(
             '원하는 시각화 결과값을 골라주세요',
-            ('전체', '세부'))
+            ('전체RF', '세부RF'))
 
             if option == '전체':
 
@@ -544,7 +544,7 @@ elif choice == "데이터페이지":
 
             option = st.selectbox(
             '원하는 시각화 결과값을 골라주세요',
-            ('전체', '세부'))
+            ('전체XGBoost', '세부XGBoost'))
 
             if option == '전체':
 
