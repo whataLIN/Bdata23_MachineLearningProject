@@ -593,11 +593,11 @@ elif choice == "데이터페이지":
 
 elif choice == "시뮬레이션":
 
-    st.subheader(":로봇_얼굴:시뮬레이션")
+    st.subheader(":robot_face:시뮬레이션")
     st.write()
     '''
-    ##### :검은색_작은_정사각형:가상의 선수:핸드볼:의 추가하여 승률을 예측해 보세요
-    ###### :검은색_작은_정사각형:아래의 슬라이더를 움직여 스탯을 조정할 수 있습니다
+    ##### :black_small_square: 가상의 선수를 추가하여 승률을 예측해 보세요
+    ###### :black_small_square: 아래의 슬라이더를 움직여 스탯을 조정할 수 있습니다
     '''
 
     # tab0, tab1, tab2, tab3 = st.tabs(["첫 번째 선수", "첫 번째 선수", "첫 번째 선수", "첫 번째 선수"])
@@ -650,6 +650,7 @@ elif choice == "시뮬레이션":
     for i, c in enumerate(cols):
         with c:
             st.write(position_list[i])
+
             st.slider("슈팅", min_value=1, max_value=10, value=1, key=f"Shooting_{i+1}")
             st.slider("드리블", min_value=1, max_value=10, value=1, key=f"Dribbling_{i+1}")
             # st.slider("패스", min_value=1, max_value=10, value=1, key=f"Passing_{i+1}")
