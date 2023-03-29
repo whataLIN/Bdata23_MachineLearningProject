@@ -373,6 +373,51 @@ elif choice == "데이터페이지":
             two_O = col5.slider("2점슛 수치", 0, 50)
             three_O = col6.slider("3점슛 수치", 0, 30)
 
+                        option = st.selectbox(
+            '원하는 시각화 결과값을 골라주세요',
+            ('전체', '세부'))
+
+            if option == '전체':
+
+                # 전체
+                fig = px.bar(
+                    x=df.columns[:-1], 
+                    y=model.feature_importances_, 
+                    labels={'x': '변수', 'y': '중요도'}
+                    )
+
+                fig.update_traces(marker_color='orange')
+
+                fig.update_layout(
+                    title="중요 변수 확인(전체)", 
+                    xaxis_title="변수", 
+                    yaxis_title="중요도", 
+                    width=800, 
+                    height=600
+                    )
+
+
+            elif option == '세부':
+                # 세부
+                fig = px.bar(
+                    x=df.columns[:-1], 
+                    y=model.feature_importances_, 
+                    labels={'x': '변수', 'y': '중요도'}
+                    )
+
+                fig.update_traces(marker_color='orange')
+
+                fig.update_layout(
+                    title="중요 변수 확인(세부)", 
+                    xaxis_title="변수", 
+                    yaxis_title="중요도", 
+                    yaxis_range=[0, 0.0004],
+                    width=800, 
+                    height=600
+                    )
+
+            st.plotly_chart(fig)
+
 
             option = st.selectbox(
             '원하는 시각화 결과값을 골라주세요',
@@ -531,7 +576,7 @@ elif choice == "데이터페이지":
                     labels={'x': '변수', 'y': '중요도'}
                     )
 
-                fig.update_traces(marker_color='red')
+                fig.update_traces(marker_color='orange')
 
                 fig.update_layout(
                     title="중요 변수 확인(세부)", 
@@ -580,10 +625,10 @@ elif choice == "데이터페이지":
                 domain = {'x': [0, 1], 'y': [0, 1]},
                 gauge = {'axis': {'range': [0, 100]},
                         'steps' : [{'range': [0, 25], 'color': "orange"},
-                                {'range': [25, 50], 'color': "yellow"},
+                                {'range': [25, 50], 'color': "orangered"},
                                 {'range': [50, 75], 'color': "orange"},
-                                {'range': [75, 100], 'color': "yellow"}],
-                        'bar': {'color': "red"}}))
+                                {'range': [75, 100], 'color': "orangered"}],
+                        'bar': {'color': "orange"}}))
     
                 # Add title and labels to the chart
                 fig.update_layout(title={'text': '승률 예측 결과', 'y':0.95, 'x':0.5},
