@@ -377,7 +377,7 @@ elif choice == "데이터페이지":
             '원하는 시각화 결과값을 골라주세요',
             ('전체RF', '세부RF'))
 
-            if option == '전체':
+            if option == '전체RF':
 
                 # 전체
                 fig = px.bar(
@@ -397,7 +397,7 @@ elif choice == "데이터페이지":
                     )
 
 
-            elif option == '세부':
+            elif option == '세부RF':
                 # 세부
                 fig = px.bar(
                     x=df.columns[:-1], 
@@ -417,53 +417,7 @@ elif choice == "데이터페이지":
                     )
 
             st.plotly_chart(fig)
-
-
-            option = st.selectbox(
-            '원하는 시각화 결과값을 골라주세요',
-            ('전체', '세부'))
-
-            if option == '전체':
-
-                # 전체
-                fig = px.bar(
-                    x=df.columns[:-1], 
-                    y=model.feature_importances_, 
-                    labels={'x': '변수', 'y': '중요도'}
-                    )
-
-                fig.update_traces(marker_color='magma')
-
-                fig.update_layout(
-                    title="중요 변수 확인(전체)", 
-                    xaxis_title="변수", 
-                    yaxis_title="중요도", 
-                    width=800, 
-                    height=600
-                    )
-
-
-            elif option == '세부':
-                # 세부
-                fig = px.bar(
-                    x=df.columns[:-1], 
-                    y=model.feature_importances_, 
-                    labels={'x': '변수', 'y': '중요도'}
-                    )
-
-                fig.update_traces(marker_color='magma')
-
-                fig.update_layout(
-                    title="중요 변수 확인(세부)", 
-                    xaxis_title="변수", 
-                    yaxis_title="중요도", 
-                    yaxis_range=[0, 0.0004],
-                    width=800, 
-                    height=600
-                    )
-
-            st.plotly_chart(fig)
-       
+   
             predict_button = st.button("예측")
 
             if predict_button:
@@ -546,7 +500,7 @@ elif choice == "데이터페이지":
             '원하는 시각화 결과값을 골라주세요',
             ('전체XGBoost', '세부XGBoost'))
 
-            if option == '전체':
+            if option == '전체XGBoost':
 
                 # 전체
                 fig = px.bar(
@@ -567,7 +521,7 @@ elif choice == "데이터페이지":
                     )
 
 
-            elif option == '세부':
+            elif option == '세부XGBoost':
                 # 세부
                 fig = px.bar(
                     x=df.columns[:-1], 
