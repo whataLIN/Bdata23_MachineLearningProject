@@ -362,7 +362,8 @@ elif choice == "데이터페이지":
             # 모델 불러오기
             with open('MH/RFmodel_drop.pkl', 'rb') as f:
                 model = joblib.load(f)
-            st.write("구현한 Random Forest 모델입니다.")               
+            st.write("구현한 Random Forest 모델입니다.") 
+
             # 첫번째 행
             col1, col2, col3, col4, col5, col6  = st.columns(6)
             G = col1.slider("경기수", 0, 40)
@@ -371,7 +372,52 @@ elif choice == "데이터페이지":
             FTR = col4.slider("자유투 수치", 0, 50)
             two_O = col5.slider("2점슛 수치", 0, 50)
             three_O = col6.slider("3점슛 수치", 0, 30)
-            
+
+            option = st.selectbox(
+            '원하는 시각화 결과값을 골라주세요',
+            ('전체RF', '세부RF'))
+
+            if option == '전체RF':
+
+                # 전체
+                fig = px.bar(
+                    x=df.columns[:-1], 
+                    y=model.feature_importances_, 
+                    labels={'x': '변수', 'y': '중요도'}
+                    )
+
+                fig.update_traces(marker_color='orange')
+
+                fig.update_layout(
+                    title="중요 변수 확인(전체)", 
+                    xaxis_title="변수", 
+                    yaxis_title="중요도", 
+                    width=800, 
+                    height=600
+                    )
+
+
+            elif option == '세부RF':
+                # 세부
+                fig = px.bar(
+                    x=df.columns[:-1], 
+                    y=model.feature_importances_, 
+                    labels={'x': '변수', 'y': '중요도'}
+                    )
+
+                fig.update_traces(marker_color='orange')
+
+                fig.update_layout(
+                    title="중요 변수 확인(세부)", 
+                    xaxis_title="변수", 
+                    yaxis_title="중요도", 
+                    yaxis_range=[0, 0.0004],
+                    width=800, 
+                    height=600
+                    )
+
+            st.plotly_chart(fig)
+   
             predict_button = st.button("예측")
 
             if predict_button:
@@ -452,16 +498,19 @@ elif choice == "데이터페이지":
 
             option = st.selectbox(
             '원하는 시각화 결과값을 골라주세요',
-            ('전체', '세부'))
+            ('전체XGBoost', '세부XGBoost'))
 
-            if option == '전체':
+            if option == '전체XGBoost':
 
                 # 전체
                 fig = px.bar(
                     x=df.columns[:-1], 
                     y=model.feature_importances_, 
+                    # color='red',
                     labels={'x': '변수', 'y': '중요도'}
                     )
+                
+                fig.update_traces(marker_color='red')
 
                 fig.update_layout(
                     title="중요 변수 확인(전체)", 
@@ -472,13 +521,16 @@ elif choice == "데이터페이지":
                     )
 
 
-            elif option == '세부':
+            elif option == '세부XGBoost':
                 # 세부
                 fig = px.bar(
                     x=df.columns[:-1], 
                     y=model.feature_importances_, 
+
                     labels={'x': '변수', 'y': '중요도'}
                     )
+
+                fig.update_traces(marker_color='red')
 
                 fig.update_layout(
                     title="중요 변수 확인(세부)", 
@@ -526,11 +578,11 @@ elif choice == "데이터페이지":
                 value = prediction,
                 domain = {'x': [0, 1], 'y': [0, 1]},
                 gauge = {'axis': {'range': [0, 100]},
-                        'steps' : [{'range': [0, 25], 'color': "lightgray"},
-                                {'range': [25, 50], 'color': "gray"},
-                                {'range': [50, 75], 'color': "lightgray"},
-                                {'range': [75, 100], 'color': "gray"}],
-                        'bar': {'color': "black"}}))
+                        'steps' : [{'range': [0, 25], 'color': "orange"},
+                                {'range': [25, 50], 'color': "yellow"},
+                                {'range': [50, 75], 'color': "orange"},
+                                {'range': [75, 100], 'color': "yellow"}],
+                        'bar': {'color': "red"}}))
     
                 # Add title and labels to the chart
                 fig.update_layout(title={'text': '승률 예측 결과', 'y':0.95, 'x':0.5},
