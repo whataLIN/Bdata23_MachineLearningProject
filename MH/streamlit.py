@@ -36,7 +36,7 @@ if choice == "메인페이지":
         '''
         **⬆️위의 탭에 있는 메뉴를 클릭해 선택하신 항목을 볼 수 있습니다!⬆️**
         '''
-        st.image("https://cdn.pixabay.com/photo/2020/09/02/04/06/man-5537262_960_720.png", width=700)
+        st.image("MH/dunk.jpg", width=700) 
         '''
         ---
 
@@ -125,7 +125,7 @@ if choice == "메인페이지":
         * College Basketball Dataset
         > [![Colab](https://img.shields.io/badge/kaggle-College%20Basketball%20Dataset-skyblue)](https://www.kaggle.com/datasets/andrewsundberg/college-basketball-dataset)
         * 팀 Notion 페이지 링크
-        > [![Notion](https://img.shields.io/badge/Notion-Sports%20TooToo-blueviolet)](https://www.notion.so/SPORT-TOO-TOO-ab7919e6c97a47f9b1ca661837550d05)
+        > [![Notion](https://img.shields.io/badge/Notion-Sports%20TooToo-lightgrey)](https://www.notion.so/SPORT-TOO-TOO-ab7919e6c97a47f9b1ca661837550d05)
         
         * colab 전처리 데이터 링크
         > [![Colab](https://img.shields.io/badge/colab-Data%20preprocessing-yellow)](https://colab.research.google.com/drive/1qTboYP4Pa73isvE4Lt3l5XYLaIhX9Tix?usp=sharing) 
