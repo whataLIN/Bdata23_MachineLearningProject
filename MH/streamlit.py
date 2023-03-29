@@ -579,9 +579,9 @@ elif choice == "데이터페이지":
                 domain = {'x': [0, 1], 'y': [0, 1]},
                 gauge = {'axis': {'range': [0, 100]},
                         'steps' : [{'range': [0, 25], 'color': "orange"},
-                                {'range': [25, 50], 'color': "orangered"},
+                                {'range': [25, 50], 'color': "yellow"},
                                 {'range': [50, 75], 'color': "orange"},
-                                {'range': [75, 100], 'color': "orangered"}],
+                                {'range': [75, 100], 'color': "yellow"}],
                         'bar': {'color': "red"}}))
     
                 # Add title and labels to the chart
