@@ -666,7 +666,8 @@ elif choice == "시뮬레이션":
 
             pl.loc[f"{i+1}번째 선수"] = player
 
-    
+
+    #(100 - 25) ÷ (250 - 25) × 100 = 30
     tdf = df.drop(['POSTSEASON', 'SEED', 'CONF', 'BARTHAG','WAB'], axis=1).copy()
     # tdf = df.drop(['TEAM', 'YEAR','W','G', 'POSTSEASON', 'SEED', 'CONF', 'BARTHAG','WAB'], axis=1).copy()
     
@@ -753,8 +754,10 @@ elif choice == "시뮬레이션":
     df_forms['SEED_Missed Tournament']=1
     df_forms['POSTSEASON_Missed Tournament']=1
     df_forms[f'SEED_Missed Tournament']=1
-    df_forms[f'BARTHAG']=0.5
     df_forms[f'CONF_{team_conf}']=1
+
+    total_stat = pl.sum(axis=0).sum()
+    df_forms[f'BARTHAG']= (total_stat - 25) ÷ (250 - 25) × 100
 
     for i in range(17): # 인덱스
         col_name = df_columns[i]
