@@ -648,8 +648,8 @@ elif choice == "시뮬레이션":
 
     for i, c in enumerate(cols):
         with c:
-            img_url='https://github.com/whataLIN/sportsTOoTOo/blob/main/KL/image/'
-            st.image(img=f"{img_url}.png")
+            img=Image.open(f'../KL/image/{c}')
+            st.image(img)
             st.write(position_list[i])
 
             st.slider("슈팅", min_value=1, max_value=10, value=1, key=f"Shooting_{i+1}")
