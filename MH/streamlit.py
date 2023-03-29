@@ -138,7 +138,7 @@ if choice == "메인페이지":
         '''
 
 elif choice == "데이터페이지":
-    tab0, tab1, tab2, tab3 = st.tabs(["🗃 Data", "📈 Chart", "🦾 Machine Learning" ,"Streamlit 진행상태.."])
+    tab0, tab1, tab2 = st.tabs(["🗃 Data", "📈 Chart", "🦾 Machine Learning"])
     data = np.random.randn(10, 1)
     with tab0:
         tab0.subheader("🗃 Data Tab")
@@ -538,23 +538,6 @@ elif choice == "데이터페이지":
     
                 st.plotly_chart(fig)
 
-    with tab3:
-        tab3.subheader("Streamlit 진행상태..")
-        st.write()
-        '''
-        ### 현재 진행상태
-        > * 메인페이지 구현완료.
-        > * 데이터 페이지 내 data tab 데이터 검색 기능 추가..
-        > * 데이터 페이지-Bar차트-지역/시즌에 따른 팀들의 승률 데이터 추가
-        > * 머신러닝 모델링 시각화
-        > * 머신러닝 모델링 선형회귀/결정트리 시각화 그래프 추가
-        > * side bar 바꿈
-
-        ### 추가해야 할 기능
-        > * 수정 후 이 탭 삭제
-        > * 시뮬레이션 기능 추가
-
-        '''
 
 elif choice == "시뮬레이션":
 
