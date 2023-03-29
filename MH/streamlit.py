@@ -510,6 +510,8 @@ elif choice == "데이터페이지":
                     # color='red',
                     labels={'x': '변수', 'y': '중요도'}
                     )
+                
+                fig.update_traces(marker_color='red')
 
                 fig.update_layout(
                     title="중요 변수 확인(전체)", 
@@ -525,9 +527,11 @@ elif choice == "데이터페이지":
                 fig = px.bar(
                     x=df.columns[:-1], 
                     y=model.feature_importances_, 
-                    # color='red',
+
                     labels={'x': '변수', 'y': '중요도'}
                     )
+
+                fig.update_traces(marker_color='red')
 
                 fig.update_layout(
                     title="중요 변수 확인(세부)", 
