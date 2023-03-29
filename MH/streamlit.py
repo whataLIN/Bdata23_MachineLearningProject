@@ -57,7 +57,7 @@ if choice == "메인페이지":
         '''
         ### 자료 설명
         > * '13~'19년 동안의 미국 대학 농구 데이터를 사용하여 각 팀마다의 승률을 계산하고 예측하는 모듈을 만든다. 
-        > * 가상의 스탯을 지닌 선수 5명을 추가하고 선택한 지역에 참가했을때 예측 승률에 대해서 알아본다.
+        > * 가상의 스탯을 지닌 선수 5명을 추가하고 선택한 대회에 참가했을때 예측 승률에 대해서 알아본다.
         ---
         ### Chart & Data List 📝
         > * Data 목록
@@ -199,7 +199,7 @@ elif choice == "데이터페이지":
             df = pd.read_csv(url)
 
             # 선택한 컬럼명으로 데이터프레임 필터링
-            conf_val = st.selectbox("원하는 지역을 골라주세요", options=df['CONF'].unique())
+            conf_val = st.selectbox("원하는 대회를 골라주세요", options=df['CONF'].unique())
         
             year_list = df['YEAR'].unique().tolist()
             year_list.sort(reverse=False) # 오름차순 정렬
@@ -241,14 +241,14 @@ elif choice == "데이터페이지":
             for CONF in unique_CONF:
                 index_dict[CONF] = df[df['CONF'] == CONF].index.tolist()
             
-            # 사용자로부터 지역 입력 받기
-            user_CONF = st.selectbox("원하시는 지역을 골라주세요:", unique_CONF)
+            # 사용자로부터 대회 입력 받기
+            user_CONF = st.selectbox("원하시는 대회를 골라주세요:", unique_CONF)
             
-            # 선택한 지역에 해당하는 모든 행 출력
+            # 선택한 대회에 해당하는 모든 행 출력
             if user_CONF in unique_CONF:
                 indices = index_dict[user_CONF]
                 sub_df = df.loc[indices]
-                st.write(f"### 해당 지역 '{user_CONF}'에 소속된 팀들의 데이터입니다. ")
+                st.write(f"### 해당 대회 '{user_CONF}'에 소속된 팀들의 데이터입니다. ")
                 st.write(sub_df)
                 
                 # 사용자로부터 시즌 입력 받기
@@ -260,7 +260,7 @@ elif choice == "데이터페이지":
                 # 선택한 시즌에 해당하는 행 출력
                 if user_YEAR != "":
                     sub_df = sub_df[sub_df['YEAR'] == int(user_YEAR)]
-                    st.write(f"### 해당 '{user_CONF}' 지역에 소속된 팀 {user_YEAR} 시즌의 데이터입니다. ")
+                    st.write(f"### {user_YEAR} 시즌에서 해당 '{user_CONF}' 대회의 데이터입니다. ")
                     st.write(sub_df)
                     # 승률 계산
                     df_winrate = (sub_df['W'] / sub_df['G']) * 100
@@ -273,7 +273,7 @@ elif choice == "데이터페이지":
                     # st.write(df_result)
                     df_long = pd.melt(df_result, id_vars=['TEAM'], value_vars=['win_rate'])
                     fig = px.bar(df_long, x='TEAM', y='value', color='TEAM')
-                    st.write(f"'{user_CONF}' 지역에 소속된 팀들의 {user_YEAR} 시즌의 승률 그래프입니다. ")
+                    st.write(f"{user_YEAR} 시즌에서 '{user_CONF}' 대회에서 승률 그래프입니다. ")
                     st.plotly_chart(fig)
             else:
                 st.warning("다시 골라주세요.")
