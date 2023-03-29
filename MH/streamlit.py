@@ -505,7 +505,7 @@ elif choice == "데이터페이지":
                 fig = px.bar(
                     x=df.columns[:-1], 
                     y=model.feature_importances_, 
-                    color_continuous_scale='blues',
+                    color_continuous_scale='reg',
                     labels={'x': '변수', 'y': '중요도'}
                     )
 
@@ -523,7 +523,7 @@ elif choice == "데이터페이지":
                 fig = px.bar(
                     x=df.columns[:-1], 
                     y=model.feature_importances_, 
-                    color_continuous_scale='blues',
+                    color_continuous_scale='red',
                     labels={'x': '변수', 'y': '중요도'}
                     )
 
@@ -573,11 +573,11 @@ elif choice == "데이터페이지":
                 value = prediction,
                 domain = {'x': [0, 1], 'y': [0, 1]},
                 gauge = {'axis': {'range': [0, 100]},
-                        'steps' : [{'range': [0, 25], 'color': "lightgray"},
-                                {'range': [25, 50], 'color': "gray"},
-                                {'range': [50, 75], 'color': "lightgray"},
-                                {'range': [75, 100], 'color': "gray"}],
-                        'bar': {'color': "black"}}))
+                        'steps' : [{'range': [0, 25], 'color': "orange"},
+                                {'range': [25, 50], 'color': "yellow"},
+                                {'range': [50, 75], 'color': "orange"},
+                                {'range': [75, 100], 'color': "yellow"}],
+                        'bar': {'color': "red"}}))
     
                 # Add title and labels to the chart
                 fig.update_layout(title={'text': '승률 예측 결과', 'y':0.95, 'x':0.5},
