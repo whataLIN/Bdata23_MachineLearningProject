@@ -599,7 +599,6 @@ elif choice == "시뮬레이션":
     ##### :black_small_square: 가상의 선수를 추가하여 승률을 예측해 보세요
     ###### :black_small_square: 아래의 슬라이더를 움직여 스탯을 조정할 수 있습니다
     '''
-
     # tab0, tab1, tab2, tab3 = st.tabs(["첫 번째 선수", "첫 번째 선수", "첫 번째 선수", "첫 번째 선수"])
     # players = []
     
@@ -630,7 +629,7 @@ elif choice == "시뮬레이션":
 
 
     cols = st.columns(5)
-    
+
     player_keys = [
         "Shooting", "Dribbling", "Rebounding", 'Defense', "Stamina"
     ]       #"Passing"
@@ -649,6 +648,8 @@ elif choice == "시뮬레이션":
 
     for i, c in enumerate(cols):
         with c:
+            img_url='https://github.com/whataLIN/sportsTOoTOo/blob/main/KL/image/'
+            st.image(img=f"{img_url}.png")
             st.write(position_list[i])
 
             st.slider("슈팅", min_value=1, max_value=10, value=1, key=f"Shooting_{i+1}")
