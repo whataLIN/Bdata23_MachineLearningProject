@@ -373,7 +373,7 @@ elif choice == "데이터페이지":
             two_O = col5.slider("2점슛 수치", 0, 50)
             three_O = col6.slider("3점슛 수치", 0, 30)
 
-                        option = st.selectbox(
+            option = st.selectbox(
             '원하는 시각화 결과값을 골라주세요',
             ('전체', '세부'))
 
