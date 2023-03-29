@@ -362,7 +362,8 @@ elif choice == "데이터페이지":
             # 모델 불러오기
             with open('MH/RFmodel_drop.pkl', 'rb') as f:
                 model = joblib.load(f)
-            st.write("구현한 Random Forest 모델입니다.")               
+            st.write("구현한 Random Forest 모델입니다.") 
+
             # 첫번째 행
             col1, col2, col3, col4, col5, col6  = st.columns(6)
             G = col1.slider("경기수", 0, 40)
@@ -372,13 +373,56 @@ elif choice == "데이터페이지":
             two_O = col5.slider("2점슛 수치", 0, 50)
             three_O = col6.slider("3점슛 수치", 0, 30)
 
-            # Feature Importance 그래프
-            fig = px.bar(
-            x=df.columns[:-1],
-            y=model.feature_importances_,
-            labels={'x': '변수', 'y': '중요도'}
-            )
-            fig.update_layout(title="중요한 변수 확인", xaxis_title="변수", yaxis_title="중요도")
+            # # Feature Importance 그래프
+            # fig = px.bar(
+            # x=df.columns[:-1],
+            # y=model.feature_importances_,
+            # labels={'x': '변수', 'y': '중요도'}
+            # )
+            # fig.update_layout(title="중요한 변수 확인", xaxis_title="변수", yaxis_title="중요도")
+
+            # st.plotly_chart(fig)
+
+            option = st.selectbox(
+            '원하는 시각화 결과값을 골라주세요',
+            ('전체', '세부'))
+
+            if option == '전체':
+
+                # 전체
+                fig = px.bar(
+                    x=df.columns[:-1], 
+                    y=model.feature_importances_, 
+                    color_continuous_scale='magma',
+                    labels={'x': '변수', 'y': '중요도'}
+                    )
+
+                fig.update_layout(
+                    title="중요 변수 확인(전체)", 
+                    xaxis_title="변수", 
+                    yaxis_title="중요도", 
+                    width=800, 
+                    height=600
+                    )
+
+
+            elif option == '세부':
+                # 세부
+                fig = px.bar(
+                    x=df.columns[:-1], 
+                    y=model.feature_importances_, 
+                    color_continuous_scale='magma',
+                    labels={'x': '변수', 'y': '중요도'}
+                    )
+
+                fig.update_layout(
+                    title="중요 변수 확인(세부)", 
+                    xaxis_title="변수", 
+                    yaxis_title="중요도", 
+                    yaxis_range=[0, 0.0004],
+                    width=800, 
+                    height=600
+                    )
 
             st.plotly_chart(fig)
        
@@ -470,6 +514,7 @@ elif choice == "데이터페이지":
                 fig = px.bar(
                     x=df.columns[:-1], 
                     y=model.feature_importances_, 
+                    color_continuous_scale='blues',
                     labels={'x': '변수', 'y': '중요도'}
                     )
 
@@ -487,6 +532,7 @@ elif choice == "데이터페이지":
                 fig = px.bar(
                     x=df.columns[:-1], 
                     y=model.feature_importances_, 
+                    color_continuous_scale='blues',
                     labels={'x': '변수', 'y': '중요도'}
                     )
 
