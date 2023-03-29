@@ -384,7 +384,7 @@ elif choice == "데이터페이지":
                 fig = px.bar(
                     x=df.columns[:-1], 
                     y=model.feature_importances_, 
-                    color_continuous_scale='magma',
+                    color='magma',
                     labels={'x': '변수', 'y': '중요도'}
                     )
 
@@ -402,7 +402,7 @@ elif choice == "데이터페이지":
                 fig = px.bar(
                     x=df.columns[:-1], 
                     y=model.feature_importances_, 
-                    color_continuous_scale='magma',
+                    color ='magma',
                     labels={'x': '변수', 'y': '중요도'}
                     )
 
@@ -505,7 +505,7 @@ elif choice == "데이터페이지":
                 fig = px.bar(
                     x=df.columns[:-1], 
                     y=model.feature_importances_, 
-                    color_continuous_scale='reg',
+                    color='red',
                     labels={'x': '변수', 'y': '중요도'}
                     )
 
@@ -523,7 +523,7 @@ elif choice == "데이터페이지":
                 fig = px.bar(
                     x=df.columns[:-1], 
                     y=model.feature_importances_, 
-                    color_continuous_scale='red',
+                    color='red',
                     labels={'x': '변수', 'y': '중요도'}
                     )
 
