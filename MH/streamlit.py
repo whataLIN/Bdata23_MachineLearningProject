@@ -530,7 +530,7 @@ elif choice == "데이터페이지":
                     labels={'x': '변수', 'y': '중요도'}
                     )
 
-                fig.update_traces(marker_color='orange')
+                fig.update_traces(marker_color='red')
 
                 fig.update_layout(
                     title="중요 변수 확인(세부)", 
