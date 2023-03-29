@@ -648,7 +648,7 @@ elif choice == "시뮬레이션":
 
     for i, c in enumerate(cols):
         with c:
-            img_url='https://github.com/whataLIN/sportsTOoTOo/blob/main/KL/image/'+str(i)+'.png'
+            img_url='https://github.com/whataLIN/sportsTOoTOo/raw/main/KL/image/'+str(i)+'.png'
             img=Image.open(img_url)
             st.image(img)
             st.write(position_list[i])
