@@ -137,6 +137,7 @@ if choice == "메인페이지":
         > [![Colab](https://img.shields.io/badge/colab-Decision%20Tree-yellow)](https://colab.research.google.com/drive/1l059OKEqqQkLu9N6RVd-KpjHDcHQI7eX?usp=sharing) 
         * colab XG Boost 모델링 데이터 링크
         > [![Colab](https://img.shields.io/badge/colab-XG%20Boost-yellow)](https://colab.research.google.com/drive/1yF3dcXCYfcFHVDmOUq1RO-tDxqtajA22?usp=sharing) 
+        
         | 구분 | 이름  | 링크 | 
         | :---: | :---: | :---: | 
         | Kaggle | College Basketball Dataset | [![Colab](https://img.shields.io/badge/kaggle-College%20Basketball%20Dataset-skyblue)](https://www.kaggle.com/datasets/andrewsundberg/college-basketball-dataset) | 
