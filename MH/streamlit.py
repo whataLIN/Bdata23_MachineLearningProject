@@ -757,7 +757,7 @@ elif choice == "시뮬레이션":
     df_forms[f'CONF_{team_conf}']=1
 
     total_stat = pl.sum(axis=0).sum()
-    df_forms[f'BARTHAG']= (total_stat - 25) ÷ (250 - 25) × 100
+    df_forms[f'BARTHAG']= ((total_stat - 25) / (250 - 25)) × 100
 
     for i in range(17): # 인덱스
         col_name = df_columns[i]
