@@ -36,7 +36,7 @@ if choice == "메인페이지":
         '''
         **⬆️위의 탭에 있는 메뉴를 클릭해 선택하신 항목을 볼 수 있습니다!⬆️**
         '''
-        st.image("MH/dunk.jpg", width=700)
+        st.image("MH/dunk.jpg", width=700) 
         '''
         ---
 
