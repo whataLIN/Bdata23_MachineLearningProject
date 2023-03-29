@@ -91,7 +91,7 @@ if choice == "메인페이지":
         '''
         ###### 각 Columns의 설명입니다.
         > 1. TEAM : 참여하는 학교의 이름
-        > 1. CONF : 소속 지역
+        > 1. CONF : 대회 이름
         > 1. G : 게임수
         > 1. W : 승리한 게임수
         > 1. ADJOE : 조정된 공격 효율성(평균 디비전 I 방어에 대해 팀이 가질 공격 효율성(점유율당 득점)의 추정치)
@@ -124,6 +124,8 @@ if choice == "메인페이지":
         * Kaggle 데이터 출처
         * College Basketball Dataset
         > [![Colab](https://img.shields.io/badge/kaggle-College%20Basketball%20Dataset-skyblue)](https://www.kaggle.com/datasets/andrewsundberg/college-basketball-dataset)
+        * 팀 Notion 페이지 링크
+        > [![Notion](https://img.shields.io/badge/Notion-Sports%20TooToo-blueviolet)](https://www.notion.so/SPORT-TOO-TOO-ab7919e6c97a47f9b1ca661837550d05)
         
         * colab 전처리 데이터 링크
         > [![Colab](https://img.shields.io/badge/colab-Data%20preprocessing-yellow)](https://colab.research.google.com/drive/1qTboYP4Pa73isvE4Lt3l5XYLaIhX9Tix?usp=sharing) 
@@ -138,7 +140,7 @@ if choice == "메인페이지":
         '''
 
 elif choice == "데이터페이지":
-    tab0, tab1, tab2, tab3 = st.tabs(["🗃 Data", "📈 Chart", "🦾 Machine Learning" ,"Streamlit 진행상태.."])
+    tab0, tab1, tab2 = st.tabs(["🗃 Data", "📈 Chart", "🦾 Machine Learning"])
     data = np.random.randn(10, 1)
     with tab0:
         tab0.subheader("🗃 Data Tab")
@@ -362,7 +364,8 @@ elif choice == "데이터페이지":
             # 모델 불러오기
             with open('MH/RFmodel_drop.pkl', 'rb') as f:
                 model = joblib.load(f)
-            st.write("구현한 Random Forest 모델입니다.")               
+            st.write("구현한 Random Forest 모델입니다.") 
+
             # 첫번째 행
             col1, col2, col3, col4, col5, col6  = st.columns(6)
             G = col1.slider("경기수", 0, 40)
@@ -371,7 +374,52 @@ elif choice == "데이터페이지":
             FTR = col4.slider("자유투 수치", 0, 50)
             two_O = col5.slider("2점슛 수치", 0, 50)
             three_O = col6.slider("3점슛 수치", 0, 30)
-            
+
+            option = st.selectbox(
+            '원하는 시각화 결과값을 골라주세요',
+            ('전체RF', '세부RF'))
+
+            if option == '전체RF':
+
+                # 전체
+                fig = px.bar(
+                    x=df.columns[:-1], 
+                    y=model.feature_importances_, 
+                    labels={'x': '변수', 'y': '중요도'}
+                    )
+
+                fig.update_traces(marker_color='orange')
+
+                fig.update_layout(
+                    title="중요 변수 확인(전체)", 
+                    xaxis_title="변수", 
+                    yaxis_title="중요도", 
+                    width=800, 
+                    height=600
+                    )
+
+
+            elif option == '세부RF':
+                # 세부
+                fig = px.bar(
+                    x=df.columns[:-1], 
+                    y=model.feature_importances_, 
+                    labels={'x': '변수', 'y': '중요도'}
+                    )
+
+                fig.update_traces(marker_color='orange')
+
+                fig.update_layout(
+                    title="중요 변수 확인(세부)", 
+                    xaxis_title="변수", 
+                    yaxis_title="중요도", 
+                    yaxis_range=[0, 0.0004],
+                    width=800, 
+                    height=600
+                    )
+
+            st.plotly_chart(fig)
+   
             predict_button = st.button("예측")
 
             if predict_button:
@@ -437,8 +485,9 @@ elif choice == "데이터페이지":
         elif option == 'XGBoost':
 
             # xgboost 모델 불러오기
-            model_path = "MH/XGBoost5.pkl"
+            model_path = "MH/XGBoost_drop.pkl"
             model = joblib.load(model_path)
+
             # 데이터 불러오기
             df = pd.read_csv('MH/cbb_drop.csv')
             X = df.drop('P_V', axis=1) # 독립변수 (관측값, 피쳐)
@@ -449,49 +498,109 @@ elif choice == "데이터페이지":
             two_O = df['2P_O']
             three_O = df['3P_O']
 
+            option = st.selectbox(
+            '원하는 시각화 결과값을 골라주세요',
+            ('전체XGBoost', '세부XGBoost'))
+
+            if option == '전체XGBoost':
+
+                # 전체
+                fig = px.bar(
+                    x=df.columns[:-1], 
+                    y=model.feature_importances_, 
+                    # color='red',
+                    labels={'x': '변수', 'y': '중요도'}
+                    )
+                
+                fig.update_traces(marker_color='red')
+
+                fig.update_layout(
+                    title="중요 변수 확인(전체)", 
+                    xaxis_title="변수", 
+                    yaxis_title="중요도", 
+                    width=800, 
+                    height=600
+                    )
+
+
+            elif option == '세부XGBoost':
+                # 세부
+                fig = px.bar(
+                    x=df.columns[:-1], 
+                    y=model.feature_importances_, 
+
+                    labels={'x': '변수', 'y': '중요도'}
+                    )
+
+                fig.update_traces(marker_color='red')
+
+                fig.update_layout(
+                    title="중요 변수 확인(세부)", 
+                    xaxis_title="변수", 
+                    yaxis_title="중요도", 
+                    yaxis_range=[0, 0.0004],
+                    width=800, 
+                    height=600
+                    )
+
+            st.plotly_chart(fig)
 
             # 모델 불러오기
-            with open('MH/XGBoost5.pkl', 'rb') as f:
+            # Load the XGBoost model
+            with open('MH/XGBoost_drop.pkl', 'rb') as f:
                 model = joblib.load(f)
-            st.write("구현한 XG Boost 모델 그래프입니다.")                
-            # 첫번째 행
-            col1, col2, col3, col4, col5, col6  = st.columns(6)
+
+            # Create sliders for input variables
+            col1, col2, col3, col4, col5, col6 = st.columns(6)
             G = col1.slider("경기수", 0, 40)
             W = col2.slider("승리수", 0, 40)
             ORB = col3.slider("리바운드 수치", 0, 50)
             FTR = col4.slider("자유투 수치", 0, 50)
             two_O = col5.slider("2점슛 수치", 0, 50)
             three_O = col6.slider("3점슛 수치", 0, 30)
-            
+
+            # Create a button to trigger the prediction
             predict_button = st.button("예측")
 
+            # When the button is pressed, make the prediction and show the result
             if predict_button:
-                    predicted = model.predict(X)
-                    variable1 = pd.DataFrame([[G, W, ORB, FTR, two_O, three_O]], columns=['G', 'W', 'ORB', 'FTR', '2P_O', '3P_O'])
-                    model1 = joblib.load('MH/XGBoost5.pkl')
-                    pred1 = model1.predict(variable1)
-                    pred1 = pred1.round(4)
-                    st.metric("승률 예측 결과: ", pred1[0]*100)
-    with tab3:
-        tab3.subheader("Streamlit 진행상태..")
-        st.write()
-        '''
-        ### 현재 진행상태
-        > * 메인페이지 구현완료.
-        > * 데이터 페이지 내 data tab 데이터 검색 기능 추가..
-        > * 데이터 페이지-Bar차트-지역/시즌에 따른 팀들의 승률 데이터 추가
-        > * 머신러닝 모델링 시각화
-        > * 머신러닝 모델링 선형회귀/결정트리 시각화 그래프 추가
-        > * side bar 바꿈
 
-        ### 추가해야 할 기능
-        > * 수정 후 이 탭 삭제
-        > * 시뮬레이션 기능 추가
+            # Create a DataFrame of the input variables
+                X = pd.DataFrame([[G, W, ORB, FTR, two_O, three_O]], columns=['G', 'W', 'ORB', 'FTR', '2P_O', '3P_O'])
+           
+                # Load the XGBoost model and make the prediction
+                model = joblib.load('MH/XGBoost_drop.pkl')
+                prediction = model.predict(X)[0]
+                prediction = round(prediction*100, 2)
+                st.metric("승률 예측 결과: ", prediction)
 
-        '''
+                # 예측 결과를 그래프한 결과
+                fig = go.Figure(go.Indicator(
+                mode = "gauge+number",
+                value = prediction,
+                domain = {'x': [0, 1], 'y': [0, 1]},
+                gauge = {'axis': {'range': [0, 100]},
+                        'steps' : [{'range': [0, 25], 'color': "orange"},
+                                {'range': [25, 50], 'color': "yellow"},
+                                {'range': [50, 75], 'color': "orange"},
+                                {'range': [75, 100], 'color': "yellow"}],
+                        'bar': {'color': "red"}}))
+    
+                # Add title and labels to the chart
+                fig.update_layout(title={'text': '승률 예측 결과', 'y':0.95, 'x':0.5},
+                            xaxis={'visible': False}, yaxis={'visible': False})
+    
+                st.plotly_chart(fig)
+
 
 elif choice == "시뮬레이션":
 
+    st.subheader(":robot_face:시뮬레이션")
+    st.write()
+    '''
+    ##### :black_small_square: 가상의 선수를 추가하여 승률을 예측해 보세요
+    ###### :black_small_square: 아래의 슬라이더를 움직여 스탯을 조정할 수 있습니다
+    '''
     # tab0, tab1, tab2, tab3 = st.tabs(["첫 번째 선수", "첫 번째 선수", "첫 번째 선수", "첫 번째 선수"])
     # players = []
     
@@ -520,25 +629,34 @@ elif choice == "시뮬레이션":
 
     # tabs = st.tabs([f"{i}번째 선수" for i in range(1, 6)])
 
-    cols = st.columns(5)
-    
-    player_keys = [
-        "shooting", "Dribbling", "Passing", "Rebounding", 'Defense', "Stamina"
-    ]
 
-    pl=pd.DataFrame(columns=player_keys, index=range(1,6))
+    cols = st.columns(5)
+
+    player_keys = [
+        "Shooting", "Dribbling", "Rebounding", 'Defense', "Stamina"
+    ]       #"Passing"
+
+    pl=pd.DataFrame(columns=player_keys, index=[f"{p}번째 선수" for p in range(1,6)])
     # for i, t in enumerate(tabs):
-    url='https://raw.githubusercontent.com/whataLIN/sportsTOoTOo/main/Basketball_processing.csv'
+
+    url='https://github.com/whataLIN/sportsTOoTOo/raw/main/cbb.csv'
     df = pd.read_csv(url)
+    df.drop(['TEAM', 'YEAR','W','G'],axis=1, inplace=True)
 
     conf_list=list(df['CONF'].unique())
     team_conf= st.selectbox('참가할 대회를 선택해주세요.', options=conf_list)
 
+    position_list=['센터','파워포워드','포인트가드','슈팅가드', '스몰포워드']
+
     for i, c in enumerate(cols):
         with c:
-            st.slider("슈팅", min_value=1, max_value=10, value=1, key=f"shooting_{i+1}")
+            img_url='https://github.com/whataLIN/sportsTOoTOo/raw/main/KL/image/'+str(i)+'.png'
+            st.image(img_url)
+            st.write(position_list[i])
+
+            st.slider("슈팅", min_value=1, max_value=10, value=1, key=f"Shooting_{i+1}")
             st.slider("드리블", min_value=1, max_value=10, value=1, key=f"Dribbling_{i+1}")
-            st.slider("패스", min_value=1, max_value=10, value=1, key=f"Passing_{i+1}")
+            # st.slider("패스", min_value=1, max_value=10, value=1, key=f"Passing_{i+1}")
             st.slider("리바운드", min_value=1, max_value=10, value=1, key=f"Rebounding_{i+1}")
             st.slider("수비", min_value=1, max_value=10, value=1, key=f"Defense_{i+1}")
             st.slider("스테미나", min_value=1, max_value=10, value=1, key=f"Stamina_{i+1}")
@@ -551,17 +669,151 @@ elif choice == "시뮬레이션":
                 stat=state[f"{p}_{i+1}"]
                 st.write(f"{p} : {stat}")
 
-            pl.loc[i+1] = player
+            pl.loc[f"{i+1}번째 선수"] = player
 
     
-    tdf = df.drop(['TEAM', 'YEAR','W','G'], axis=1).copy()
-    max_values = [tdf[i].max() for i in tdf.columns]
+    tdf = df.drop(['POSTSEASON', 'SEED', 'CONF', 'BARTHAG','WAB'], axis=1).copy()
+    # tdf = df.drop(['TEAM', 'YEAR','W','G', 'POSTSEASON', 'SEED', 'CONF', 'BARTHAG','WAB'], axis=1).copy()
+    
+    fromShooting = tdf[['ADJOE', 'EFG_O', 'FTR', '2P_O', '3P_O']].copy()
+    fromDribbling = tdf[['TORD']].copy()
+    fromRebounding = tdf[['ORB', 'DRB']].copy()
+    fromDefense = tdf[['TOR', 'EFG_D', 'ADJDE', '2P_D', '3P_D', 'FTRD']].copy()
+    fromStamina = tdf[['ADJ_T']].copy()
+
+    plusVarlist=['ADJOE', 'EFG_O', 'FTR', '2P_O', '3P_O', 'ORB', 'TOR','ADJ_T']
+    minusVarlist=['TORD', 'EFG_D', '2P_D', '3P_D', 'FTRD', 'ADJDE', 'DRB']
+
+    pl_to_per=pd.DataFrame(
+        0,
+        columns=tdf.columns,
+        index=pl.index
+    )
+
+
+    def get_max(df):   #최대값을 구해 딕셔너리로 반환하는 함수
+        return {key: int(value) for key, value in df.max().to_dict().items()}
+
+        # ADJOE, ADJDE, EFG_O, EFG_D, TOR, TORD, ORB, DRB, FTR, FTRD, 2P_O, 2P_D, 3P_O, 3P_D, ADJ_T
+        # postseason, seed는 missed tornament.
+
+    def percentage_cal(stat_pl, final_df, df, stat):
+            #df는 스탯별로 영향을 주는 변수끼리 나눈거
+            #stat_pl는 선수들의 스탯 모음
+            #finaldf는 결과를 반영할 df
+            #stat는 선수 스탯을 어디서 가져올건지
+
+        columnlist=df.columns
+        addper=[]
+        subper=[]
+        max_values = get_max(df)  #df의 각 값의 max값이 딕셔너리로 반환
+
+        for i in columnlist:
+            if i in plusVarlist:
+                addper.append(i)
+            else:
+                subper.append(i)
+                final_df[i]=max_values[i]/5
+
+
+        for p in range(5):
+            for i in addper:      #df의 컬럼명을 차례로 가져옴
+                final_df.loc[f"{p+1}번째 선수", i] += (int(max_values[i])/50) * stat_pl.loc[f"{p+1}번째 선수", stat]
+
+        for p in range(5):
+            for i in subper:
+                final_df.loc[f"{p+1}번째 선수", i] -= (int(max_values[i]) / 50) * stat_pl.loc[f"{p+1}번째 선수", stat]
+
+
+    percentage_cal(pl, pl_to_per, df=fromShooting, stat='Shooting')
+    percentage_cal(pl, pl_to_per, df=fromDribbling, stat='Dribbling')
+    percentage_cal(pl, pl_to_per, df=fromRebounding, stat='Rebounding')
+    percentage_cal(pl, pl_to_per, df=fromDefense, stat='Defense')
+    percentage_cal(pl, pl_to_per, df=fromStamina, stat='Stamina')
+    
+    # st.write(pl_to_per)
+    teaminfo = pd.DataFrame(
+        data=pl_to_per.sum(axis=0).values.reshape(1, 15),
+        columns=tdf.columns,
+        index=["%"])
+    st.write("team info: ", teaminfo)
+
+    df_columns = ['ADJOE', 'ADJDE', 'BARTHAG', 'EFG_O', 'EFG_D', 'TOR', 'TORD', 'ORB',
+       'DRB', 'FTR', 'FTRD', '2P_O', '2P_D', '3P_O', '3P_D', 'ADJ_T', 'WAB',
+       'CONF_A10', 'CONF_ACC', 'CONF_AE', 'CONF_ASun', 'CONF_Amer', 'CONF_B10',
+       'CONF_B12', 'CONF_BE', 'CONF_BSky', 'CONF_BSth', 'CONF_BW', 'CONF_CAA',
+       'CONF_CUSA', 'CONF_GWC', 'CONF_Horz', 'CONF_Ind', 'CONF_Ivy',
+       'CONF_MAAC', 'CONF_MAC', 'CONF_MEAC', 'CONF_MVC', 'CONF_MWC',
+       'CONF_NEC', 'CONF_OVC', 'CONF_P12', 'CONF_Pat', 'CONF_SB', 'CONF_SC',
+       'CONF_SEC', 'CONF_SWAC', 'CONF_Slnd', 'CONF_Sum', 'CONF_WAC',
+       'CONF_WCC', 'CONF_ind', 'SEED_1.0', 'SEED_2.0', 'SEED_3.0', 'SEED_4.0',
+       'SEED_5.0', 'SEED_6.0', 'SEED_7.0', 'SEED_8.0', 'SEED_9.0', 'SEED_10.0',
+       'SEED_11.0', 'SEED_12.0', 'SEED_13.0', 'SEED_14.0', 'SEED_15.0',
+       'SEED_16.0', 'SEED_Missed Tournament', 'POSTSEASON_2.0',
+       'POSTSEASON_4.0', 'POSTSEASON_8.0', 'POSTSEASON_16.0',
+       'POSTSEASON_32.0', 'POSTSEASON_64.0', 'POSTSEASON_68.0']
+
+    df_forms = pd.DataFrame(0, columns=df_columns, index=['%'])
+    
+    df_forms['SEED_Missed Tournament']=1
+    df_forms['POSTSEASON_Missed Tournament']=1
+    df_forms[f'SEED_Missed Tournament']=1
+    df_forms[f'BARTHAG']=0.5
+    df_forms[f'CONF_{team_conf}']=1
+
+    for i in range(17): # 인덱스
+        col_name = df_columns[i]
+        if col_name=='BARTHAG' or col_name=='WAB': continue
+
+        df_forms[col_name]+=teaminfo[col_name]
 
     
+    # teaminfo = pd.DataFrame(
+    #     data=pl_to_per.sum(axis=0).values.reshape(1, 15),
+    #     columns=tdf.columns,
+    #     index=["%"])
+
+    # teaminfo['CONF']=team_conf
+    # teaminfo['BARTHAG']=0.5
+    # teaminfo["POSTSEASON"]="Missed Tournament"
+    # teaminfo['SEED']='Missed Tournament'
+    # teaminfo['WAB']=0
+
+    # teaminfo = teaminfo.reindex(columns=["CONF", 'ADJOE', 'ADJDE', 'BARTHAG', 'EFG_O', 'EFG_D', "TOR", "TORD", 'ORB', 'DRB', 'FTR', 'FTRD', '2P_O', '2P_D', '3P_O', '3P_D', 'ADJ_T', 'WAB', 'POSTSEASON', 'SEED'])
+
+    # st.write(teaminfo)
+    # st.write(teaminfo[:], df.iloc[:5])
+    # st.write(len(teaminfo.columns), len(df.columns))
+
+    # #전처리 다시
+    # df.loc[len(df)] = teaminfo
+    # ps={"R68":68,"R64":64,"R32":32,"S16":16,"E8":8,"F4":4,"2ND":2,"Champion":1}
+    # df['POSTSEASON'] = df['POSTSEASON'].map(ps)
+    # df.fillna({'POSTSEASON':'Missed Tournament'}, inplace = True)
+    # df.fillna({'SEED':'Missed Tournament'}, inplace = True)
+    # df=pd.get_dummies(df, columns=['CONF','SEED','POSTSEASON'])  
+    # df = df.tail(1)
+
+    option = st.selectbox(
+    '원하는 차트를 골라주세요',
+    ('LinearRegressor', 'RandomForest', 'DecisionTree', 'XGBoost')) #'XGBoost'
+    model_path = f"KL/{option}.pkl"
+    model = joblib.load(model_path)
+
+    st.write(option)
+
+    predict_button = st.button("예측")
+
+    if predict_button:
+        variable = df_forms
+        model = joblib.load(f'KL/{option}.pkl')
+        # pred = model.predict(variable)
+        # pred = np.round(pred, 2)
+        pred = (model.predict(variable)*100).round(2)
+        pred=str(pred)[1:5]
+
+        st.metric(label="예측 결과 : ", value=f"{pred}%")
 
 
-    # st.write(pl)
 
-                #슈팅 : 슈팅_i
-            #데이터프레임에 선수 능력치 저장하깅
     
