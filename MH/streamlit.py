@@ -91,7 +91,7 @@ if choice == "메인페이지":
         '''
         ###### 각 Columns의 설명입니다.
         > 1. TEAM : 참여하는 학교의 이름
-        > 1. CONF : 소속 지역
+        > 1. CONF : 대회 이름
         > 1. G : 게임수
         > 1. W : 승리한 게임수
         > 1. ADJOE : 조정된 공격 효율성(평균 디비전 I 방어에 대해 팀이 가질 공격 효율성(점유율당 득점)의 추정치)
@@ -138,7 +138,7 @@ if choice == "메인페이지":
         '''
 
 elif choice == "데이터페이지":
-    tab0, tab1, tab2, tab3 = st.tabs(["🗃 Data", "📈 Chart", "🦾 Machine Learning" ,"Streamlit 진행상태.."])
+    tab0, tab1, tab2 = st.tabs(["🗃 Data", "📈 Chart", "🦾 Machine Learning"])
     data = np.random.randn(10, 1)
     with tab0:
         tab0.subheader("🗃 Data Tab")
@@ -591,23 +591,6 @@ elif choice == "데이터페이지":
     
                 st.plotly_chart(fig)
 
-    with tab3:
-        tab3.subheader("Streamlit 진행상태..")
-        st.write()
-        '''
-        ### 현재 진행상태
-        > * 메인페이지 구현완료.
-        > * 데이터 페이지 내 data tab 데이터 검색 기능 추가..
-        > * 데이터 페이지-Bar차트-지역/시즌에 따른 팀들의 승률 데이터 추가
-        > * 머신러닝 모델링 시각화
-        > * 머신러닝 모델링 선형회귀/결정트리 시각화 그래프 추가
-        > * side bar 바꿈
-
-        ### 추가해야 할 기능
-        > * 수정 후 이 탭 삭제
-        > * 시뮬레이션 기능 추가
-
-        '''
 
 elif choice == "시뮬레이션":
 
@@ -817,9 +800,9 @@ elif choice == "시뮬레이션":
         # pred = model.predict(variable)
         # pred = np.round(pred, 2)
         pred = (model.predict(variable)*100).round(2)
-        if option=='XGBoost': pred=str(pred)[1:5]
+        pred=str(pred)[1:5]
 
-        st.metric(f"결과: {pred}%")
+        st.metric(label="예측 결과 : ", value=f"{pred}%")
 
 
 
