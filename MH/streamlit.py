@@ -483,7 +483,7 @@ elif choice == "데이터페이지":
         elif option == 'XGBoost':
 
             # xgboost 모델 불러오기
-            model_path = "MH/XGBoost5.pkl"
+            model_path = "MH/XGBoost_drop.pkl"
             model = joblib.load(model_path)
 
             # 데이터 불러오기
@@ -545,7 +545,7 @@ elif choice == "데이터페이지":
 
             # 모델 불러오기
             # Load the XGBoost model
-            with open('MH/XGBoost5.pkl', 'rb') as f:
+            with open('MH/XGBoost_drop.pkl', 'rb') as f:
                 model = joblib.load(f)
 
             # Create sliders for input variables
@@ -567,7 +567,7 @@ elif choice == "데이터페이지":
                 X = pd.DataFrame([[G, W, ORB, FTR, two_O, three_O]], columns=['G', 'W', 'ORB', 'FTR', '2P_O', '3P_O'])
            
                 # Load the XGBoost model and make the prediction
-                model = joblib.load('MH/XGBoost5.pkl')
+                model = joblib.load('MH/XGBoost_drop.pkl')
                 prediction = model.predict(X)[0]
                 prediction = round(prediction*100, 2)
                 st.metric("승률 예측 결과: ", prediction)
