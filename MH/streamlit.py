@@ -137,16 +137,16 @@ if choice == "메인페이지":
         > [![Colab](https://img.shields.io/badge/colab-Decision%20Tree-yellow)](https://colab.research.google.com/drive/1l059OKEqqQkLu9N6RVd-KpjHDcHQI7eX?usp=sharing) 
         * colab XG Boost 모델링 데이터 링크
         > [![Colab](https://img.shields.io/badge/colab-XG%20Boost-yellow)](https://colab.research.google.com/drive/1yF3dcXCYfcFHVDmOUq1RO-tDxqtajA22?usp=sharing) 
-        
+
         | 구분 | 이름  | 링크 | 
         | :---: | :---: | :---: | 
         | Kaggle | College Basketball Dataset | [![Colab](https://img.shields.io/badge/kaggle-College%20Basketball%20Dataset-skyblue)](https://www.kaggle.com/datasets/andrewsundberg/college-basketball-dataset) | 
         | Notion | Sports Too Too  | [![Notion](https://img.shields.io/badge/Notion-Sports%20TooToo-lightgrey)](https://www.notion.so/SPORT-TOO-TOO-ab7919e6c97a47f9b1ca661837550d05) | 
-        | Colab | 전처리 데이터 | [![Colab](https://img.shields.io/badge/colab-Data%20preprocessing-yellow)](https://colab.research.google.com/drive/1qTboYP4Pa73isvE4Lt3l5XYLaIhX9Tix?usp=sharing)  | 
+        |  | 전처리 데이터 | [![Colab](https://img.shields.io/badge/colab-Data%20preprocessing-yellow)](https://colab.research.google.com/drive/1qTboYP4Pa73isvE4Lt3l5XYLaIhX9Tix?usp=sharing)  | 
         |  | Linear Regressor | [![Colab](https://img.shields.io/badge/colab-Line%20Regression-yellow)](https://colab.research.google.com/drive/1bK8x_1Cich78Mf_6hdFcPp1U01d4RjMv?usp=sharing)  | 
         | Colab | Random Forest | [![Colab](https://img.shields.io/badge/colab-Random%20Forest-yellow)](https://colab.research.google.com/drive/1E5AzXyJoulVY-12rxmJjBphqOwf4kpNF?usp=sharing)  | 
-        | Colab | Decision Tree | [![Colab](https://img.shields.io/badge/colab-Decision%20Tree-yellow)](https://colab.research.google.com/drive/1l059OKEqqQkLu9N6RVd-KpjHDcHQI7eX?usp=sharing)  | 
-        | Colab | XG Boost | [![Colab](https://img.shields.io/badge/colab-XG%20Boost-yellow)](https://colab.research.google.com/drive/1yF3dcXCYfcFHVDmOUq1RO-tDxqtajA22?usp=sharing)  | 
+        |  | Decision Tree | [![Colab](https://img.shields.io/badge/colab-Decision%20Tree-yellow)](https://colab.research.google.com/drive/1l059OKEqqQkLu9N6RVd-KpjHDcHQI7eX?usp=sharing)  | 
+        |  | XG Boost | [![Colab](https://img.shields.io/badge/colab-XG%20Boost-yellow)](https://colab.research.google.com/drive/1yF3dcXCYfcFHVDmOUq1RO-tDxqtajA22?usp=sharing)  | 
         
         '''
 
